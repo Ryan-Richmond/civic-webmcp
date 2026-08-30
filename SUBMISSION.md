@@ -1,12 +1,12 @@
 # Civic — submission package
 
-Status: draft for review. The public repository is live; no app deployment, video, or Devpost entry is published.
+Status: draft for review. The public repository and Vercel deployment are live; no video or Devpost entry is published.
 
 Deliverables required by `PRD.md` section 21, with the state of each:
 
 | Deliverable | State |
 |---|---|
-| Working live URL | **Not deployed.** Awaiting approval; see "Deployment" below. |
+| Working live URL | Deployed at `https://civic-webmcp.vercel.app`; Vercel reports Ready. In-app WebMCP verification remains open. |
 | Public Git repository | Done. `https://github.com/Ryan-Richmond/civic-webmcp`; MIT license detected. |
 | Open-source license visible | Done. MIT in `LICENSE`. |
 | Reproducible local setup | Done. See `README.md`. |
@@ -163,8 +163,9 @@ flow; the local harness is the fallback if the browser's WebMCP support is unava
 
 `vercel.json` is committed and configured for a static SPA. The public GitHub repository is connected to the
 `civic-webmcp` Vercel project: pull requests receive preview deployments and merges to `main` deploy production.
-No production deployment has been approved yet.
+Vercel reports `https://civic-webmcp.vercel.app` Ready. Its project API confirms that `main` is the production
+branch. The first branch build after connecting Git was automatically promoted as the project's initial deployment.
 
-This is a static client with no application environment variables or secrets. After the preview deploy, verify
-the URL over HTTPS, confirm the WebMCP chip reads **live** in a supporting browser, and exercise the actual tools
-from a fresh ChatGPT in-app browser session before approving the production merge.
+This is a static client with no application environment variables or secrets. Confirm the WebMCP chip reads
+**live** in a supporting browser and exercise the actual tools from a fresh ChatGPT in-app browser session before
+approving the production merge.

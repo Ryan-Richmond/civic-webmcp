@@ -78,7 +78,7 @@ Gate passed: `npm run check` passes and the signature request produces the expec
 
 Gate passed: reducer tests prove staged/canonical separation, stale-version rejection, persistence round trips, and suppression clearing.
 
-### 3. WebMCP boundary — adapter complete; live round trip pending deploy
+### 3. WebMCP boundary — adapter complete; deployed live round trip pending
 
 - Register always-available read and focus tools.
 - Swap `preview_scenario` for revise/compare/discard tools based on preview state.
@@ -86,7 +86,7 @@ Gate passed: reducer tests prove staged/canonical separation, stale-version reje
 - Register `unpin_program` and `test_assumption` only in their valid states.
 - Use one abort controller per registration generation so lifecycle changes do not leave duplicate tools.
 
-Local gate passed: contract tests prove the exact tool set and schemas for baseline, staged, pinned, and coefficient-selected states. The browser gate still requires a secure deployed origin and ChatGPT in-app test.
+Local gate passed: contract tests prove the exact tool set and schemas for baseline, staged, pinned, and coefficient-selected states. A secure deployed origin now exists; the browser gate still requires a fresh ChatGPT in-app test.
 
 ### 4. Instrument interface
 
@@ -96,7 +96,7 @@ Local gate passed: contract tests prove the exact tool set and schemas for basel
 
 Gate: the complete manual signature flow works without WebMCP.
 
-### 5. Accessibility and browser verification — local gate passed; in-app WebMCP round trip pending deploy
+### 5. Accessibility and browser verification — local gate passed; in-app WebMCP round trip pending
 
 - Provide semantic controls, keyboard navigation, visible focus, screen-reader summaries, and generous interaction targets.
 - Honor `prefers-reduced-motion` and show a textual change list.
@@ -119,7 +119,7 @@ Every control now meets 24x24. Program rows were raised from 38px to 40px, the m
 District tiles are 56px. If a touch target is ever needed, the existing stacked layout below 1050px already has
 the vertical room for 44px+, and that is where it belongs.
 
-The browser gate for the WebMCP round trip still requires a secure deployed origin and ChatGPT in-app testing.
+The secure deployed origin is Ready. The remaining browser gate is a fresh ChatGPT in-app WebMCP test.
 
 ### 5b. Motion — complete locally
 
@@ -135,7 +135,7 @@ The browser gate for the WebMCP round trip still requires a secure deployed orig
 Gate passed: five timing tests plus browser verification of the wiring. Watching the motion on screen remains a
 human check; the automation pane keeps the document hidden, which pauses `requestAnimationFrame`.
 
-### 6. Submission package — local deliverables complete; public repository created; preview, recording, and submission pending
+### 6. Submission package — repository and deployment live; recording and submission pending
 
 - Deploy the approved candidate.
 - Capture baseline, proposal, pins, infeasibility, recovery, and receipt screenshots.
@@ -147,7 +147,8 @@ Complete: `npm run capture` builds the app, serves it, drives a real Chrome thro
 and writes the six required states to `audit/submission/` at 1280x720 CSS px, 2x scale. It asserts on the page's
 own text at every step, so a drifted UI fails the run rather than producing screenshots of the wrong thing, and
 it fails on any console error or failed request. `SUBMISSION.md` holds the Devpost text, the WebMCP testing
-instructions, and the 150-second shot list. `vercel.json` is configured but nothing has been deployed.
+instructions, and the 150-second shot list. `vercel.json` is deployed at `https://civic-webmcp.vercel.app`; Vercel
+reports Ready and the linked project's production branch is `main`.
 
 Fixed while capturing: the page had no icon link, so every browser requested `/favicon.ico` and got a 404. That
 is a console error on the deployed origin, which PRD section 20 forbids. Now an inline data-URI icon that cannot
@@ -170,7 +171,7 @@ Settled by test or measurement:
 
 Still open, and not closable locally:
 
-- ChatGPT discovers the expected tools from a fresh in-app browser session. **Needs a deployed HTTPS origin.**
+- ChatGPT discovers the expected tools from a fresh in-app browser session. **The HTTPS origin is ready; needs the in-app session.**
 - A fresh user identifies the largest three baseline programs in under 30 seconds. **Needs a human observer.**
 - A user identifies a gain and a loss without agent prose. **Needs a human observer.**
 - The recorded walkthrough fits 150 seconds. Script is written to 150s; **needs the recording.**

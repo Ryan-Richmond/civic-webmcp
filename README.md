@@ -15,6 +15,9 @@ It is connected to the `civic-webmcp` Vercel project: pull-request branches crea
 `main` create production deployments. Civic is a static client and requires no managed database, authentication
 service, or API key.
 
+Live deployment: [civic-webmcp.vercel.app](https://civic-webmcp.vercel.app). The deployed HTTPS origin is ready;
+the fresh ChatGPT in-app WebMCP round trip remains a separate verification gate.
+
 ## Local development
 
 Requirements:
