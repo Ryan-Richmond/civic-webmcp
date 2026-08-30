@@ -58,8 +58,6 @@ export const COEFFICIENTS: readonly Coefficient[] = [
   { id: 'cf_health_safety', programId: 'health', outcomeId: 'safety', value: 0.6, confidence: 'low', provenance: 'assumed' },
   { id: 'cf_youth_opportunity', programId: 'youth', outcomeId: 'opportunity', value: 1.5, confidence: 'low', provenance: 'assumed' },
   { id: 'cf_climate_safety', programId: 'climate', outcomeId: 'safety', value: 0.9, confidence: 'low', provenance: 'assumed' },
-  { id: 'cf_libraries_opportunity', programId: 'libraries', outcomeId: 'opportunity', value: 1.1, confidence: 'low', provenance: 'assumed' },
-  { id: 'cf_libraries_mobility', programId: 'libraries', outcomeId: 'mobility', value: 0.3, confidence: 'low', provenance: 'assumed' },
   { id: 'cf_streets_mobility', programId: 'streets', outcomeId: 'mobility', value: 1, confidence: 'medium', provenance: 'seeded' },
   { id: 'cf_streets_safety', programId: 'streets', outcomeId: 'safety', value: 0.5, confidence: 'low', provenance: 'assumed' },
 ]

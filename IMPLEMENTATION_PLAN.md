@@ -27,9 +27,9 @@ Date: 2026-08-29
 
 ## Open review decisions
 
-- Complete the required lightweight third, comparison-first visual direction or amend the PRD to accept two directions.
-- Confirm whether Libraries and Digital Access is explicitly marked `not modeled` before UI fixture copy is frozen.
-- Approve Vercel project creation and deployment when the local WebMCP shell is ready.
+- **Resolved:** Implement Direction A, Instrument, and amend the product record to accept the two explored directions.
+- **Resolved:** Mark Libraries and Digital Access explicitly `not modeled` and remove its outcome coefficients.
+- **Resolved:** Use Vercel for the first preview deployment and WebMCP browser test.
 
 ## Work packages
 

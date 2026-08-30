@@ -60,4 +60,12 @@ describe('Civic WebMCP tools', () => {
     const h = harness()
     expect(buildCivicTools(h.state, h.environment).map(({ name }) => name)).not.toContain('accept_scenario')
   })
+
+  it('returns the post-mutation state version', async () => {
+    const h = harness()
+    const tool = buildCivicTools(h.state, h.environment).find(({ name }) => name === 'preview_scenario')!
+    const result = await tool.execute({ stateVersion: 1, name: 'Versioned', weights: SIGNATURE_WEIGHTS, rationale: 'Version check' }, { signal: new AbortController().signal })
+    expect(result).toMatchObject({ status: 'feasible', stateVersion: 2 })
+    expect(h.state.stateVersion).toBe(2)
+  })
 })

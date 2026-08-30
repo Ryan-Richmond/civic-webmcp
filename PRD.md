@@ -129,7 +129,7 @@ Dollar values below are millions.
 | Public Health | 11 | 7 | 20 | Wellbeing, inclusion |
 | Youth and Learning | 14 | 8 | 22 | Opportunity, inclusion |
 | Climate and Parks | 8 | 4 | 16 | Resilience, wellbeing |
-| Libraries and Digital Access | 7 | 5 | 12 | Opportunity, access |
+| Libraries and Digital Access | 7 | 5 | 12 | **Not modeled**; its value is preserved as a human judgment |
 | Streets and Infrastructure | 11 | 7 | 20 | Mobility, resilience |
 | **Total** | **100** |  |  |  |
 
@@ -274,7 +274,7 @@ Shows:
 
 ## 11. Visual and interaction requirements
 
-The PRD defines information behavior, not a final visual style. Before implementation, exactly three visual directions must be generated and Ryan must select one.
+The PRD defines information behavior, not a final visual style. Two switchable visual directions were explored in one component, and Ryan selected **Direction A: Instrument** on 2026-08-29. The originally planned third direction was waived so implementation could proceed against the stronger live-workspace direction.
 
 All directions must preserve:
 
@@ -663,7 +663,7 @@ Primary references, verified 2026-08-29:
 ### 2026-08-29: product definition
 
 - Finalize this PRD.
-- Generate exactly three visual directions.
+- Generate two switchable visual directions and select one. **Complete: Instrument selected 08-29.**
 - Select one visual target before implementation.
 - Spike the constraint engine interface and WebMCP registration.
 
@@ -722,11 +722,11 @@ Gate: another person can follow the testing instructions and reproduce the signa
 
 These decisions must be resolved before their dependent work begins:
 
-1. Select one of exactly three visual directions before UI implementation.
-2. Choose the bounded constraint-engine implementation during the technical spike.
-3. Select Vercel or another static host before the first deployed WebMCP test.
+1. **Resolved 08-29:** Implement Direction A, Instrument, from the two explored directions; waive the third-direction requirement.
+2. **Resolved 08-29:** Use the deterministic integer-tenths greedy allocator with effective box constraints.
+3. **Resolved 08-29:** Use Vercel for the first preview and deployed WebMCP test; retain Cloudflare as the fallback.
 4. ~~Confirm final fictional district geometry after visual direction selection.~~ **Closed 08-29: six abstract tiles in a 3x2 grid, not irregular polygons.** Tiles satisfy Sections 10.2 and 18 (keyboard selection, non-color direction and magnitude indicators, legibility at 1280x720) at a fraction of the cost, and irregular boundaries buy only still-frame appeal. All three visual directions inherit this.
-6. Decide whether one or two programs are labeled **not modeled** in the Model Inspector rather than mapped to an outcome index. Doing so is honest, since no index captures what a library is worth, and it makes pinning a values act rather than an optimization the agent could have performed itself. Blocks fixture authoring only.
+6. **Resolved 08-29:** Libraries and Digital Access is labeled **not modeled** and has no outcome coefficient. Pinning it remains an explicit human values act.
 5. Confirm the public repository name and MIT license before submission packaging.
 
 No open decision blocks the initial visual exploration or engine/WebMCP spike.

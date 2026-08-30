@@ -117,10 +117,11 @@ function scenarioTool(name: 'preview_scenario' | 'revise_scenario', state: Civic
       const stale = requireCurrent(input, environment)
       if (stale) return stale
       const current = environment.getState()
+      const nextStateVersion = current.stateVersion + 1
       const intent = parseScenario(input, current)
       const result = solveScenario(intent.request)
       environment.dispatch({ type: 'stage', scenario: { intent, result }, meta: { actor: 'tool', action: name, summary: result.status === 'feasible' ? 'staged a feasible proposal' : `no plan: requires $${(result.requiredTotal / 10).toFixed(1)}M` } })
-      return { status: result.status, stateVersion: environment.getState().stateVersion, result }
+      return { status: result.status, stateVersion: nextStateVersion, result }
     },
   }
 }
@@ -175,13 +176,14 @@ export function buildCivicTools(state: CivicState, environment: ToolEnvironment)
       execute: (input) => {
         const stale = requireCurrent(input, environment)
         if (stale) return stale
+        const nextStateVersion = environment.getState().stateVersion + 1
         const focus: FocusState = {
           programs: (Array.isArray(input.programs) ? input.programs : []).filter((id): id is ProgramId => PROGRAM_IDS.includes(id as ProgramId)),
           districts: (Array.isArray(input.districts) ? input.districts : []).filter((id): id is DistrictId => DISTRICTS.some((district) => district.id === id)),
           outcomes: (Array.isArray(input.outcomes) ? input.outcomes : []).filter((id): id is OutcomeId => OUTCOME_IDS.includes(id as OutcomeId)),
         }
         environment.dispatch({ type: 'focus', focus, meta: { actor: 'tool', action: 'focus_tradeoffs', summary: 'focused visible tradeoffs' } })
-        return { status: 'focused', stateVersion: environment.getState().stateVersion, focus }
+        return { status: 'focused', stateVersion: nextStateVersion, focus }
       },
     },
     scenarioTool(state.staged ? 'revise_scenario' : 'preview_scenario', state, environment),
@@ -204,8 +206,9 @@ export function buildCivicTools(state: CivicState, environment: ToolEnvironment)
       execute: (input) => {
         const stale = requireCurrent(input, environment)
         if (stale) return stale
+        const nextStateVersion = environment.getState().stateVersion + 1
         environment.dispatch({ type: 'discard', meta: { actor: 'tool', action: 'discard_preview', summary: 'discarded the staged proposal' } })
-        return { status: 'discarded', stateVersion: environment.getState().stateVersion }
+        return { status: 'discarded', stateVersion: nextStateVersion }
       },
     })
   }
@@ -217,9 +220,10 @@ export function buildCivicTools(state: CivicState, environment: ToolEnvironment)
     execute: (input) => {
       const stale = requireCurrent(input, environment)
       if (stale) return stale
+      const nextStateVersion = environment.getState().stateVersion + 1
       const programId = input.programId as ProgramId
       environment.dispatch({ type: 'unpin', programId, meta: { actor: 'tool', action: 'unpin_program', summary: `removed the ${programId} pin` } })
-      return { status: 'unpinned', stateVersion: environment.getState().stateVersion, programId }
+      return { status: 'unpinned', stateVersion: nextStateVersion, programId }
     },
   })
 
@@ -229,9 +233,10 @@ export function buildCivicTools(state: CivicState, environment: ToolEnvironment)
     execute: (input) => {
       const stale = requireCurrent(input, environment)
       if (stale) return stale
+      const nextStateVersion = environment.getState().stateVersion + 1
       const coefficientId = input.coefficientId as CoefficientId
       environment.dispatch({ type: 'setSuppression', coefficientId, suppressed: input.suppressed !== false, meta: { actor: 'tool', action: 'test_assumption', summary: `tested ${coefficientId}` } })
-      return { status: 'counterfactual', stateVersion: environment.getState().stateVersion, coefficientId }
+      return { status: 'counterfactual', stateVersion: nextStateVersion, coefficientId }
     },
   })
 

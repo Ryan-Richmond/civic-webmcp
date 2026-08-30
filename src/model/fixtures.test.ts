@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { BASELINE_ALLOCATION, DISTRICT_INCIDENCE, PROGRAMS, TOTAL_BUDGET } from './fixtures'
+import { BASELINE_ALLOCATION, COEFFICIENTS, DISTRICT_INCIDENCE, PROGRAMS, TOTAL_BUDGET } from './fixtures'
 
 describe('Harbor City fixtures', () => {
   it('closes the baseline budget exactly', () => {
@@ -17,5 +17,9 @@ describe('Harbor City fixtures', () => {
     for (const incidence of Object.values(DISTRICT_INCIDENCE)) {
       expect(Object.values(incidence).reduce((sum, value) => sum + value, 0)).toBeCloseTo(1, 10)
     }
+  })
+
+  it('keeps Libraries explicitly outside the illustrative outcome model', () => {
+    expect(COEFFICIENTS.some(({ programId }) => programId === 'libraries')).toBe(false)
   })
 })

@@ -220,6 +220,6 @@ Run 2026-08-29 against the fixtures above.
 
 ## 8. Open
 
-1. Whether one or two programs are labeled **not modeled** rather than mapped to an index (PRD §24.6). Recommend Libraries: no index captures what a library is worth, and it makes pinning a values act rather than an optimization the agent could have done itself.
+1. **Resolved 08-29:** Libraries and Digital Access is explicitly **not modeled**. No outcome coefficient represents its value; holding it is a visible human values decision.
 2. Coefficient magnitudes are placeholders by construction, but they should not look silly to anyone who has seen a capital budget. Ten minutes of your judgment before anything renders.
 3. Visual direction: three to generate, one to select (PRD §11, §24.1).
