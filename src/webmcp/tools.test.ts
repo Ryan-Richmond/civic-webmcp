@@ -69,6 +69,100 @@ describe('Civic WebMCP tools', () => {
     expect(buildCivicTools(h.state, h.environment).map(({ name }) => name)).not.toContain('accept_scenario')
   })
 
+  it('records read tools without changing the scenario state version', async () => {
+    const h = harness()
+    let tools = buildCivicTools(h.state, h.environment)
+    const stateResult = await tools.find(({ name }) => name === 'get_civic_state')!.execute({}, { signal: new AbortController().signal })
+    tools = buildCivicTools(h.state, h.environment)
+    await tools.find(({ name }) => name === 'get_model_details')!.execute({ stateVersion: 1 }, { signal: new AbortController().signal })
+
+    expect(stateResult).toMatchObject({
+      stateVersion: 1,
+      baselineVersion: 'harbor-city-1.0',
+      latestAccepted: null,
+      ui: { selectedProgram: null, selectedDistrict: null, selectedOutcome: 'stability' },
+    })
+    expect(h.state.stateVersion).toBe(1)
+    expect(h.state.activity.map(({ action }) => action)).toEqual(['get_civic_state', 'get_model_details'])
+    expect(h.state.activity.map(({ stateVersion }) => stateVersion)).toEqual([1, 1])
+  })
+
+  it('keeps read and mutation outputs inside the Chrome guidance budget', async () => {
+    const h = harness()
+    let tools = buildCivicTools(h.state, h.environment)
+    const overview = await tools.find(({ name }) => name === 'get_model_details')!.execute({ stateVersion: 1 }, { signal: new AbortController().signal })
+    expect(JSON.stringify(overview).length).toBeLessThanOrEqual(1_500)
+
+    tools = buildCivicTools(h.state, h.environment)
+    const details = await tools.find(({ name }) => name === 'get_model_details')!.execute({ stateVersion: 1, programs: ['housing', 'transit', 'emergency', 'libraries'] }, { signal: new AbortController().signal })
+    expect(JSON.stringify(details).length).toBeLessThanOrEqual(1_500)
+
+    tools = buildCivicTools(h.state, h.environment)
+    const preview = await tools.find(({ name }) => name === 'preview_scenario')!.execute({ stateVersion: 1, name: 'Compact', weights: SIGNATURE_WEIGHTS, rationale: 'Compact response' }, { signal: new AbortController().signal })
+    expect(JSON.stringify(preview).length).toBeLessThanOrEqual(1_500)
+
+    tools = buildCivicTools(h.state, h.environment)
+    const stagedState = await tools.find(({ name }) => name === 'get_civic_state')!.execute({}, { signal: new AbortController().signal })
+    expect(JSON.stringify(stagedState).length).toBeLessThanOrEqual(1_500)
+  })
+
+  it('compares baseline, canonical, and staged state and records the read', async () => {
+    const h = harness()
+    let tools = buildCivicTools(h.state, h.environment)
+    await tools.find(({ name }) => name === 'preview_scenario')!.execute({ stateVersion: 1, name: 'Compare', weights: SIGNATURE_WEIGHTS, rationale: 'Compare' }, { signal: new AbortController().signal })
+    tools = buildCivicTools(h.state, h.environment)
+    const comparison = await tools.find(({ name }) => name === 'compare_scenarios')!.execute({ stateVersion: 2 }, { signal: new AbortController().signal })
+
+    expect(comparison).toMatchObject({ units: 'USD millions', latestAccepted: null })
+    expect(comparison).toHaveProperty('baseline')
+    expect(comparison).toHaveProperty('canonical')
+    expect(comparison).toHaveProperty('staged')
+    expect(h.state.activity.at(-1)?.action).toBe('compare_scenarios')
+    expect(h.state.stateVersion).toBe(2)
+  })
+
+  it('reports human UI selection and the latest accepted scenario', async () => {
+    const h = harness()
+    h.environment.dispatch({ type: 'setUiSelection', selection: { selectedProgram: 'housing', selectedDistrict: 'river_ward', selectedOutcome: 'mobility' } })
+    let tools = buildCivicTools(h.state, h.environment)
+    await tools.find(({ name }) => name === 'preview_scenario')!.execute({ stateVersion: 2, name: 'Accepted', weights: SIGNATURE_WEIGHTS, rationale: 'Accepted scenario' }, { signal: new AbortController().signal })
+    h.environment.dispatch({ type: 'accept', id: 'accepted-1', meta: { actor: 'human', action: 'accept', summary: 'accepted the scenario' } })
+    tools = buildCivicTools(h.state, h.environment)
+    const result = await tools.find(({ name }) => name === 'get_civic_state')!.execute({}, { signal: new AbortController().signal })
+
+    expect(result).toMatchObject({
+      ui: { selectedProgram: 'housing', selectedDistrict: 'river_ward', selectedOutcome: 'mobility' },
+      latestAccepted: { id: 'accepted-1', name: 'Accepted', stateVersion: 4 },
+    })
+    expect(h.state.accepted[0]?.toolTrace.map(({ action }) => action)).toEqual(['preview_scenario'])
+    expect(h.state.accepted[0]?.constraintChecks).toHaveLength(4)
+    expect(h.state.accepted[0]?.request.weights).toEqual(SIGNATURE_WEIGHTS)
+  })
+
+  it('executes focus, unpin, counterfactual, and discard tools in their valid states', async () => {
+    const h = harness()
+    let tools = buildCivicTools(h.state, h.environment)
+    await tools.find(({ name }) => name === 'focus_tradeoffs')!.execute({ stateVersion: 1, programs: ['housing'], districts: ['river_ward'], outcomes: ['mobility'] }, { signal: new AbortController().signal })
+    expect(h.state.ui).toEqual({ selectedProgram: 'housing', selectedDistrict: 'river_ward', selectedOutcome: 'mobility' })
+
+    h.environment.dispatch({ type: 'pin', programId: 'climate', value: 80, meta: { actor: 'human', action: 'pin', summary: 'pin climate' } })
+    tools = buildCivicTools(h.state, h.environment)
+    await tools.find(({ name }) => name === 'unpin_program')!.execute({ stateVersion: 3, programId: 'climate' }, { signal: new AbortController().signal })
+    expect(h.state.pins).toEqual({})
+
+    h.environment.dispatch({ type: 'selectCoefficient', coefficientId: 'cf_housing_stability' })
+    tools = buildCivicTools(h.state, h.environment)
+    await tools.find(({ name }) => name === 'test_assumption')!.execute({ stateVersion: 5, coefficientId: 'cf_housing_stability', suppressed: true }, { signal: new AbortController().signal })
+    expect(h.state.suppressedCoefficients).toEqual(['cf_housing_stability'])
+
+    tools = buildCivicTools(h.state, h.environment)
+    await tools.find(({ name }) => name === 'preview_scenario')!.execute({ stateVersion: 6, name: 'Discard me', weights: SIGNATURE_WEIGHTS, rationale: 'Discard' }, { signal: new AbortController().signal })
+    tools = buildCivicTools(h.state, h.environment)
+    await tools.find(({ name }) => name === 'discard_preview')!.execute({ stateVersion: 7 }, { signal: new AbortController().signal })
+    expect(h.state.staged).toBeNull()
+    expect(h.state.suppressedCoefficients).toEqual([])
+  })
+
   it('returns the post-mutation state version', async () => {
     const h = harness()
     const tool = buildCivicTools(h.state, h.environment).find(({ name }) => name === 'preview_scenario')!

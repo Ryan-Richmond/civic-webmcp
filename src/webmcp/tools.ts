@@ -1,5 +1,6 @@
-import { COEFFICIENTS, DISTRICTS, MODEL_VERSION, PROGRAMS } from '../model/fixtures'
+import { BASELINE_ALLOCATION, COEFFICIENTS, DISTRICTS, MODEL_VERSION, PROGRAMS, TOTAL_BUDGET } from '../model/fixtures'
 import { normalizeWeightVector, solveScenario } from '../engine/solve'
+import type { SolveResult } from '../engine/solve'
 import { OUTCOME_IDS, PROGRAM_IDS } from '../model/types'
 import type { CivicAction, CivicState, FocusState, ScenarioIntent } from '../state/civicState'
 import type { CoefficientId, DistrictId, OutcomeId, ProgramId, Targets } from '../model/types'
@@ -51,6 +52,35 @@ function parseTargets(value: unknown): Targets | undefined {
 
 function stateSchema(version: number) {
   return { type: 'integer', const: version, description: 'The stateVersion returned by get_civic_state.' }
+}
+
+const compactAllocation = (allocation: Record<ProgramId, number>) => Object.fromEntries(
+  PROGRAM_IDS.map((id) => [id, allocation[id] / 10]),
+)
+
+const compactBinding = (binding: { programId: ProgramId; cause: string; relation: string; detail: string }) => ({
+  program: binding.programId,
+  cause: binding.cause,
+  relation: binding.relation,
+  detail: binding.detail,
+})
+
+function compactResult(result: SolveResult) {
+  if (result.status === 'feasible') {
+    return {
+      status: result.status,
+      allocation: compactAllocation(result.allocation),
+      bindings: result.bindings.map(compactBinding),
+    }
+  }
+  return {
+    status: result.status,
+    reason: result.reason,
+    budget: result.availableTotal / 10,
+    minimumRequired: result.requiredTotal / 10,
+    maximumAvailable: result.maximumTotal / 10,
+    conflicts: result.conflicts.map(compactBinding),
+  }
 }
 
 function scenarioSchema(state: CivicState) {
@@ -120,8 +150,8 @@ function scenarioTool(name: 'preview_scenario' | 'revise_scenario', state: Civic
       const nextStateVersion = current.stateVersion + 1
       const intent = parseScenario(input, current)
       const result = solveScenario(intent.request)
-      environment.dispatch({ type: 'stage', scenario: { intent, result }, meta: { actor: 'tool', action: name, summary: result.status === 'feasible' ? 'staged a feasible proposal' : `no plan: requires $${(result.requiredTotal / 10).toFixed(1)}M` } })
-      return { status: result.status, stateVersion: nextStateVersion, result }
+      environment.dispatch({ type: 'stage', scenario: { intent, result }, meta: { actor: 'tool', action: name, summary: result.status === 'feasible' ? 'staged a feasible proposal' : `no plan: ${result.conflicts.length} conflicting request constraints` } })
+      return { stateVersion: nextStateVersion, ...compactResult(result) }
     },
   }
 }
@@ -142,26 +172,69 @@ export function buildCivicTools(state: CivicState, environment: ToolEnvironment)
       annotations: { readOnlyHint: true },
       execute: () => {
         const current = environment.getState()
-        return { stateVersion: current.stateVersion, modelVersion: current.modelVersion, canonical: current.canonical, staged: current.staged, pins: current.pins, focus: current.focus }
+        const latestAccepted = current.accepted.at(-1)
+        const staged = current.staged
+          ? { name: current.staged.intent.name, rationale: current.staged.intent.rationale, ...compactResult(current.staged.result) }
+          : null
+        const response = {
+          stateVersion: current.stateVersion,
+          baselineVersion: current.baselineVersion,
+          modelVersion: current.modelVersion,
+          units: 'USD millions',
+          canonical: compactAllocation(current.canonical),
+          staged,
+          latestAccepted: latestAccepted ? {
+            id: latestAccepted.id,
+            name: latestAccepted.name,
+            stateVersion: latestAccepted.stateVersion,
+            allocation: compactAllocation(latestAccepted.allocation),
+          } : null,
+          pins: Object.fromEntries(Object.entries(current.pins).map(([id, value]) => [id, (value as number) / 10])),
+          ui: current.ui,
+          agentFocus: current.focus,
+        }
+        environment.dispatch({ type: 'logActivity', meta: { actor: 'tool', action: 'get_civic_state', summary: 'read current Civic state' } })
+        return response
       },
     },
     {
       name: 'get_model_details',
       title: 'Inspect the Civic model',
       description: 'Read disclosed program bounds, coefficients, constraints, and the fictional-model disclaimer.',
-      inputSchema: versioned({ programs: { type: 'array', items: { type: 'string', enum: PROGRAM_IDS } } }),
+      inputSchema: versioned({ programs: { type: 'array', uniqueItems: true, maxItems: 4, items: { type: 'string', enum: PROGRAM_IDS } } }),
       annotations: { readOnlyHint: true },
       execute: (input) => {
         const stale = requireCurrent(input, environment)
         if (stale) return stale
-        const requested = Array.isArray(input.programs) ? input.programs : PROGRAM_IDS
-        return {
+        const requested = Array.isArray(input.programs)
+          ? input.programs.filter((id): id is ProgramId => PROGRAM_IDS.includes(id as ProgramId))
+          : []
+        const selected = requested.length > 0 ? PROGRAMS.filter((program) => requested.includes(program.id)) : PROGRAMS
+        const response = {
           modelVersion: MODEL_VERSION,
-          programs: PROGRAMS.filter((program) => requested.includes(program.id)),
-          coefficients: COEFFICIENTS.filter((coefficient) => requested.includes(coefficient.programId)),
-          constraints: ['total = $100.0M', 'statutory program bounds', '30% default change cap', 'pins are immutable to scenario tools', 'stateVersion must match'],
+          units: 'USD millions',
+          budget: TOTAL_BUDGET / 10,
+          programs: selected.map((program) => ({
+            id: program.id,
+            label: program.label,
+            baseline: program.baseline / 10,
+            min: program.minimum / 10,
+            max: program.maximum / 10,
+            ...(requested.length === 0 ? {} : {
+              effects: COEFFICIENTS.filter((coefficient) => coefficient.programId === program.id).map((coefficient) => ({
+                outcome: coefficient.outcomeId,
+                value: coefficient.value,
+                confidence: coefficient.confidence,
+                provenance: coefficient.provenance,
+              })),
+            }),
+          })),
+          constraints: ['total=100', 'statutory bounds', '30% default change cap', 'pins immutable', 'matching stateVersion'],
           disclaimer: 'Harbor City is fictional. Outcome indices are illustrative, not forecasts or evidence of causation.',
+          ...(requested.length === 0 ? { next: 'Re-call with up to four program IDs for coefficients.' } : {}),
         }
+        environment.dispatch({ type: 'logActivity', meta: { actor: 'tool', action: 'get_model_details', summary: requested.length === 0 ? 'read model overview' : `read details for ${requested.join(', ')}` } })
+        return response
       },
     },
     {
@@ -197,7 +270,15 @@ export function buildCivicTools(state: CivicState, environment: ToolEnvironment)
         const stale = requireCurrent(input, environment)
         if (stale) return stale
         const current = environment.getState()
-        return { canonical: current.canonical, staged: current.staged?.result ?? null }
+        const response = {
+          units: 'USD millions',
+          baseline: compactAllocation(BASELINE_ALLOCATION),
+          canonical: compactAllocation(current.canonical),
+          staged: current.staged ? compactResult(current.staged.result) : null,
+          latestAccepted: current.accepted.at(-1)?.name ?? null,
+        }
+        environment.dispatch({ type: 'logActivity', meta: { actor: 'tool', action: 'compare_scenarios', summary: 'compared baseline, canonical, and staged state' } })
+        return response
       },
     })
     tools.push({

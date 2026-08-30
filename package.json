@@ -3,6 +3,14 @@
   "private": true,
   "version": "0.1.0",
   "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Ryan-Richmond/civic-webmcp.git"
+  },
+  "engines": {
+    "node": ">=22",
+    "npm": ">=11"
+  },
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",

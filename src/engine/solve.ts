@@ -35,7 +35,9 @@ export interface FeasibleResult {
 
 export interface InfeasibleResult {
   status: 'infeasible'
+  reason: 'crossed_bounds' | 'minimum_total_exceeds_budget' | 'maximum_total_below_budget'
   requiredTotal: number
+  maximumTotal: number
   availableTotal: number
   bounds: EffectiveBound[]
   conflicts: BindingConstraint[]
@@ -123,10 +125,13 @@ function programScores(weights: OutcomeWeights): Record<ProgramId, number> {
 const requestBindings = (bounds: EffectiveBound[]): BindingConstraint[] =>
   bounds.reduce<BindingConstraint[]>((bindings, bound) => {
     if (bound.lowerCause === 'target') {
-      bindings.push({ programId: bound.programId, cause: 'target', detail: `requires at least $${(bound.requestedLower / 10).toFixed(1)}M` })
+      bindings.push({ programId: bound.programId, cause: 'target', relation: 'minimum', detail: `requires at least $${(bound.requestedLower / 10).toFixed(1)}M` })
     }
     else if (bound.lowerCause === 'pin' || bound.lowerCause === 'protected') {
-      bindings.push({ programId: bound.programId, cause: bound.lowerCause, detail: `held at $${(bound.lower / 10).toFixed(1)}M` })
+      bindings.push({ programId: bound.programId, cause: bound.lowerCause, relation: 'equal', detail: `held at $${(bound.lower / 10).toFixed(1)}M` })
+    }
+    if (bound.upperCause === 'target') {
+      bindings.push({ programId: bound.programId, cause: 'target', relation: 'maximum', detail: `must remain at or below $${(bound.requestedUpper / 10).toFixed(1)}M` })
     }
     return bindings
   }, [])
@@ -140,7 +145,13 @@ export function solveScenario(request: SolveRequest): SolveResult {
   if (crossedBounds.length > 0 || requiredTotal > TOTAL_BUDGET || maximumTotal < TOTAL_BUDGET) {
     return {
       status: 'infeasible',
+      reason: requiredTotal > TOTAL_BUDGET
+        ? 'minimum_total_exceeds_budget'
+        : maximumTotal < TOTAL_BUDGET
+          ? 'maximum_total_below_budget'
+          : 'crossed_bounds',
       requiredTotal,
+      maximumTotal,
       availableTotal: TOTAL_BUDGET,
       bounds,
       conflicts: requestBindings(bounds),

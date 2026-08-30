@@ -60,6 +60,7 @@ export type Pins = Partial<Record<ProgramId, number>>
 export interface BindingConstraint {
   programId: ProgramId
   cause: 'pin' | 'protected' | 'target' | 'cap' | 'statute'
+  relation: 'minimum' | 'maximum' | 'equal'
   detail: string
 }
 

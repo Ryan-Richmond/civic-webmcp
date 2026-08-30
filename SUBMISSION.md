@@ -1,13 +1,13 @@
 # Civic — submission package
 
-Status: draft for review. Nothing here is published, deployed, or submitted.
+Status: draft for review. The public repository is live; no app deployment, video, or Devpost entry is published.
 
 Deliverables required by `PRD.md` section 21, with the state of each:
 
 | Deliverable | State |
 |---|---|
 | Working live URL | **Not deployed.** Awaiting approval; see "Deployment" below. |
-| Public Git repository | **Not published.** Local only, awaiting approval. |
+| Public Git repository | Done. `https://github.com/Ryan-Richmond/civic-webmcp`; MIT license detected. |
 | Open-source license visible | Done. MIT in `LICENSE`. |
 | Reproducible local setup | Done. See `README.md`. |
 | Text description | Draft below. |
@@ -96,7 +96,9 @@ Motion eases the allocation rather than the DOM, because the chart library remou
 change. The flow diagram, the program bars, and the district tiles all render from one clock, and displayed
 numbers always read the settled allocation, never an in-flight frame.
 
-40 tests. `npm run check` runs typecheck, tests, and build.
+52 tests. `npm run check` runs typecheck, tests, and build. The suite directly exercises tool registration,
+dynamic lifecycle, live-versus-fallback UI, every tool execution path, state-version recovery, compact output
+budgets, deterministic arithmetic, and the full receipt contract.
 
 ---
 
@@ -109,9 +111,9 @@ npm install
 npm run dev
 ```
 
-The workspace is designed for a desktop viewport of 1280x720 or wider. A built-in agent harness in the lower
-left runs the same engine the WebMCP tools call, so the entire signature flow can be exercised without an agent
-present.
+The workspace is designed for a desktop viewport of 1280x720 or wider. When WebMCP is unavailable, a built-in
+fallback harness runs the same engine the tools call so the signature flow can be exercised without an agent.
+When WebMCP is live, the harness disappears and the live tool surface and activity trail become primary.
 
 ### With a WebMCP-capable browser
 
@@ -159,12 +161,10 @@ flow; the local harness is the fallback if the browser's WebMCP support is unava
 
 ## Deployment
 
-`vercel.json` is committed and configured for a static SPA. **Nothing has been deployed.** When you approve:
+`vercel.json` is committed and configured for a static SPA. The public GitHub repository is connected to the
+`civic-webmcp` Vercel project: pull requests receive preview deployments and merges to `main` deploy production.
+No production deployment has been approved yet.
 
-```sh
-npx vercel --prod
-```
-
-This is a static client with no environment variables and no secrets. After the first deploy, verify the live
-URL over HTTPS, confirm the WebMCP chip reads **live** in a supporting browser, and re-run the capture against
-the deployed origin before recording.
+This is a static client with no application environment variables or secrets. After the preview deploy, verify
+the URL over HTTPS, confirm the WebMCP chip reads **live** in a supporting browser, and exercise the actual tools
+from a fresh ChatGPT in-app browser session before approving the production merge.

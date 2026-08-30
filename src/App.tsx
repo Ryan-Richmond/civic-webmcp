@@ -84,10 +84,17 @@ function ScenarioRail({ state, dispatch, onPinSignature, onSelectProgram }: { st
   const result = state.staged?.result; const feasible = result?.status === 'feasible'; const signaturePinned = SIGNATURE_PINS.every((id) => state.pins[id] !== undefined)
   const changes = feasible ? changeList(state.canonical, result.allocation) : []
   const pinConflicts = stagedPinConflicts(state)
+  const infeasibleMessage = result?.status !== 'infeasible'
+    ? null
+    : result.reason === 'minimum_total_exceeds_budget'
+      ? <>Requested floors require <strong>{formatMoney(result.requiredTotal)}</strong> against {formatMoney(result.availableTotal)}.</>
+      : result.reason === 'maximum_total_below_budget'
+        ? <>Requested ceilings allow at most <strong>{formatMoney(result.maximumTotal)}</strong> against {formatMoney(result.availableTotal)}.</>
+        : <><strong>{result.conflicts.length}</strong> requested {result.conflicts.length === 1 ? 'bound conflicts' : 'bounds conflict'} with the program limits.</>
   return <section className={`panel scenario-panel ${result?.status === 'infeasible' ? 'has-conflict' : ''}`} aria-labelledby="scenario-heading"><div className="panel-heading"><h2 id="scenario-heading">Scenario rail</h2><span className="state-chip">{result?.status ?? 'baseline'}</span></div>
-    <div className="scenario-copy">{state.staged ? <><strong>{state.staged.intent.name}</strong><p>{state.staged.intent.rationale}</p></> : <p>No active request. State a goal through a WebMCP agent, or run one of the harness utterances.</p>}{result?.status === 'infeasible' ? <div className="conflict-summary"><Warning size={18} weight="fill" /><span>No plan. Requested floors require <strong>{formatMoney(result.requiredTotal)}</strong> against {formatMoney(result.availableTotal)}.</span></div> : null}{pinConflicts.length > 0 ? <div className="conflict-summary"><Warning size={18} weight="fill" /><span>Pinned after this preview was solved. It contradicts {pinConflicts.length} {pinConflicts.length === 1 ? 'pin' : 'pins'} and cannot be accepted until the agent revises it.</span></div> : null}</div>
+    <div className="scenario-copy">{state.staged ? <><strong>{state.staged.intent.name}</strong><p>{state.staged.intent.rationale}</p></> : <p>No active request. State a goal through a WebMCP agent, or run one of the harness utterances.</p>}{infeasibleMessage ? <div className="conflict-summary"><Warning size={18} weight="fill" /><span>No plan. {infeasibleMessage}</span></div> : null}{pinConflicts.length > 0 ? <div className="conflict-summary"><Warning size={18} weight="fill" /><span>Pinned after this preview was solved. It contradicts {pinConflicts.length} {pinConflicts.length === 1 ? 'pin' : 'pins'} and cannot be accepted until the agent revises it.</span></div> : null}</div>
     <ul className="binding-list" aria-label={result?.status === 'infeasible' ? 'Binding constraints' : 'Change list'}>
-      {result?.status === 'infeasible' ? result.conflicts.map((binding) => <li key={`${binding.programId}-${binding.cause}`}><button className="binding-chip" onClick={() => onSelectProgram(binding.programId)} title={binding.detail}><span aria-hidden="true">{binding.programId} {binding.cause === 'target' ? '≥' : '='} {binding.detail.match(/\$[\d.]+M/)?.[0]}</span><span className="sr-only">{`${binding.detail}. Show this program.`}</span></button></li>) : null}
+      {result?.status === 'infeasible' ? result.conflicts.map((binding) => <li key={`${binding.programId}-${binding.cause}-${binding.relation}`}><button className="binding-chip" onClick={() => onSelectProgram(binding.programId)} title={binding.detail}><span aria-hidden="true">{binding.programId} {binding.relation === 'minimum' ? '≥' : binding.relation === 'maximum' ? '≤' : '='} {binding.detail.match(/\$[\d.]+M/)?.[0]}</span><span className="sr-only">{`${binding.detail}. Show this program.`}</span></button></li>) : null}
       {changes.map((change) => <li key={change.programId}><button className={`change-chip ${change.direction}`} onClick={() => onSelectProgram(change.programId)}><span aria-hidden="true">{change.programId} {change.direction === 'up' ? '▲' : '▼'} {formatDelta(change.delta)}</span><span className="sr-only">{`${change.label} ${change.direction === 'up' ? 'up' : 'down'} ${Math.abs(change.delta / 10).toFixed(1)} to ${formatMoney(change.to)}. Show this program.`}</span></button></li>)}
     </ul>
     <div className="scenario-actions"><button className="primary-button" disabled={!feasible || pinConflicts.length > 0} onClick={() => dispatch({ type: 'accept', id: crypto.randomUUID(), meta: { actor: 'human', action: 'accept', summary: 'accepted the staged scenario' } })}><CheckCircle size={16} /> Accept scenario</button><button className="quiet-button" disabled={!state.staged} onClick={() => dispatch({ type: 'discard', meta: { actor: 'human', action: 'discard', summary: 'discarded the staged scenario' } })}>Discard</button><button className="quiet-button" disabled={signaturePinned} onClick={onPinSignature}>{signaturePinned ? '3 values pinned' : 'Pin 3 human values'}</button><span>Human-only controls</span></div>
@@ -104,10 +111,11 @@ function Harness({ state, dispatch }: { state: CivicState; dispatch: React.Dispa
   </section>
 }
 
-function AgentActivity({ state }: { state: CivicState }) {
+function AgentActivity({ state, webMcpStatus }: { state: CivicState; webMcpStatus: string }) {
   const names = civicToolNames(state)
   const { toolCalls, humanDecisions } = activityCounts(state)
-  return <section className="panel activity-panel" aria-labelledby="activity-heading"><div className="panel-heading"><h2 id="activity-heading">Agent activity</h2><span>{names.length} registered · {toolCalls} tool {toolCalls === 1 ? 'call' : 'calls'} · {humanDecisions} human</span></div><div className="activity-body"><ol aria-label="Tool calls and human decisions, most recent last">{state.activity.length === 0 ? <li className="activity-empty"><p>No calls yet · v{state.stateVersion} · 8 programs, 6 districts, model {state.modelVersion} loaded and awaiting an agent.</p></li> : state.activity.slice(-5).map((entry) => <li key={entry.id}><code>{entry.action}</code><span>{entry.actor === 'tool' ? 'tool' : 'human'}</span><p>{entry.summary} · v{entry.id}</p></li>)}</ol><aside><h3>Live tool surface</h3>{names.map((name) => <code key={name}>{name}</code>)}<h3>protectedPrograms enum</h3><p>{PROGRAM_IDS.filter((id) => state.pins[id] === undefined).map((id) => `“${id}”`).join(', ')}</p></aside></div></section>
+  const registrationLabel = webMcpStatus === 'live' ? `${names.length} registered` : `${names.length} defined · WebMCP ${webMcpStatus}`
+  return <section className="panel activity-panel" aria-labelledby="activity-heading"><div className="panel-heading"><h2 id="activity-heading">Agent activity</h2><span>{registrationLabel} · {toolCalls} tool {toolCalls === 1 ? 'call' : 'calls'} · {humanDecisions} human</span></div><div className="activity-body"><ol aria-label="Tool calls and human decisions, most recent last">{state.activity.length === 0 ? <li className="activity-empty"><p>No calls yet · v{state.stateVersion} · 8 programs, 6 districts, model {state.modelVersion} loaded and awaiting an agent.</p></li> : state.activity.slice(-5).map((entry) => <li key={entry.id}><code>{entry.action}</code><span>{entry.actor === 'tool' ? 'tool' : 'human'}</span><p>{entry.summary} · state v{entry.stateVersion}</p></li>)}</ol><aside><h3>Live tool surface</h3>{names.map((name) => <code key={name}>{name}</code>)}<h3>protectedPrograms enum</h3><p>{PROGRAM_IDS.filter((id) => state.pins[id] === undefined).map((id) => `“${id}”`).join(', ')}</p></aside></div></section>
 }
 
 function Inspector({ state, selectedProgram, dispatch }: { state: CivicState; selectedProgram: ProgramId | null; dispatch: React.Dispatch<CivicAction> }) {
@@ -118,14 +126,26 @@ function Inspector({ state, selectedProgram, dispatch }: { state: CivicState; se
     const moved = changeList(receipt.from, receipt.allocation)
     const heldPins = PROGRAMS.filter((entry) => receipt.pins[entry.id] !== undefined)
     const relied = COEFFICIENTS.filter((coefficient) => moved.some((change) => change.programId === coefficient.programId))
+    const weights = Object.entries(receipt.request.weights).map(([outcome, weight]) => `${outcome} ${(weight * 100).toFixed(0)}%`).join(', ')
+    const protectedPrograms = receipt.request.protectedPrograms?.join(', ') || 'none'
+    const targets = Object.entries(receipt.request.targets ?? {}).map(([program, target]) => {
+      const parts = [target?.minimum === undefined ? null : `≥ ${formatMoney(target.minimum)}`, target?.maximum === undefined ? null : `≤ ${formatMoney(target.maximum)}`].filter(Boolean)
+      return `${program} ${parts.join(' and ')}`
+    }).join(', ') || 'none'
     return <><h3>{receipt.name}</h3><p>Accepted by a human · model {receipt.modelVersion} · state v{receipt.stateVersion}</p><p className="receipt-rationale">{receipt.rationale}</p>
+      <strong>Request</strong>
+      <dl><div><dt>Weights</dt><dd>{weights}</dd></div><div><dt>Protected</dt><dd>{protectedPrograms}</dd></div><div><dt>Firm targets</dt><dd>{targets}</dd></div></dl>
+      <strong>Tool trace ({receipt.toolTrace.length})</strong>
+      <dl>{receipt.toolTrace.length === 0 ? <div><dt>None recorded</dt><dd>local harness</dd></div> : receipt.toolTrace.map((entry) => <div key={entry.id}><dt>{entry.action}</dt><dd>state v{entry.stateVersion} · {entry.summary}</dd></div>)}</dl>
+      <strong>Constraint checks ({receipt.constraintChecks.length})</strong>
+      <ul>{receipt.constraintChecks.map((check) => <li key={check}>{check}</li>)}</ul>
       <strong>Programs moved ({moved.length})</strong>
       <dl>{moved.map((change) => <div key={change.programId}><dt>{change.label}</dt><dd>{formatMoney(change.from)} → {formatMoney(change.to)} ({change.direction === 'up' ? '↑' : '↓'} {formatDelta(change.delta)})</dd></div>)}<div><dt>Total</dt><dd>exactly {formatMoney(TOTAL_BUDGET)}</dd></div></dl>
       <strong>Human pins held ({heldPins.length})</strong>
       <dl>{heldPins.length === 0 ? <div><dt>None</dt><dd>no pins</dd></div> : heldPins.map((entry) => <div key={entry.id}><dt>{entry.label}</dt><dd>{formatMoney(receipt.pins[entry.id] as number)}</dd></div>)}</dl>
       <strong>Coefficients relied upon ({relied.length})</strong>
       <dl>{relied.map((coefficient) => <div key={coefficient.id}><dt>{coefficient.id}</dt><dd>{coefficient.value.toFixed(1)} · {coefficient.confidence}</dd></div>)}</dl>
-      <small>No suppressed assumption can enter a receipt. Low-confidence coefficients remain disclosed in the model inspector.</small></>
+      <small>{receipt.humanDecision}. No suppressed assumption can enter a receipt. Low-confidence coefficients remain disclosed in the model inspector.</small></>
   })() : <p>No accepted scenario yet. Only the labeled human control can create a receipt.</p>}</div>}</section>
 }
 
@@ -142,18 +162,15 @@ function ScenarioAnnouncer({ state }: { state: CivicState }) {
 }
 
 export function App() {
-  const { state, dispatch, webMcpStatus } = useCivicRuntime(); const [selectedOutcome, setSelectedOutcome] = useState<OutcomeId>('stability'); const [selectedProgram, setSelectedProgram] = useState<ProgramId | null>(null); const [selectedDistrict, setSelectedDistrict] = useState<DistrictId | null>(null)
-
-  // focus_tradeoffs is an agent-visible tool, so its focus must actually move the human's view.
-  useEffect(() => {
-    const [program] = state.focus.programs; const [district] = state.focus.districts; const [outcome] = state.focus.outcomes
-    if (program) setSelectedProgram(program)
-    if (district) setSelectedDistrict(district)
-    if (outcome) setSelectedOutcome(outcome)
-  }, [state.focus])
+  const { state, dispatch, webMcpStatus } = useCivicRuntime()
+  const { selectedOutcome, selectedProgram, selectedDistrict } = state.ui
+  const setSelectedOutcome = (selectedOutcome: OutcomeId) => dispatch({ type: 'setUiSelection', selection: { selectedOutcome } })
+  const setSelectedProgram = (selectedProgram: ProgramId) => dispatch({ type: 'setUiSelection', selection: { selectedProgram } })
+  const setSelectedDistrict = (selectedDistrict: DistrictId | null) => dispatch({ type: 'setUiSelection', selection: { selectedDistrict } })
 
   const togglePin = (programId: ProgramId) => state.pins[programId] !== undefined ? dispatch({ type: 'unpin', programId, meta: { actor: 'human', action: 'unpin', summary: `unpinned ${programId}` } }) : dispatch({ type: 'pin', programId, value: state.canonical[programId], meta: { actor: 'human', action: 'pin', summary: `pinned ${programId} at ${formatMoney(state.canonical[programId])}` } })
   const pinSignature = () => { for (const programId of SIGNATURE_PINS) if (state.pins[programId] === undefined) dispatch({ type: 'pin', programId, value: state.canonical[programId], meta: { actor: 'human', action: 'pin', summary: `pinned ${programId} at ${formatMoney(state.canonical[programId])}` } }) }
   const showProgram = (programId: ProgramId) => { setSelectedProgram(programId); document.getElementById(`program-${programId}`)?.scrollIntoView({ block: 'nearest' }) }
-  return <main className="civic-app"><ScenarioAnnouncer state={state} /><p className="viewport-notice">Civic is built for a desktop browser at 1280×720 or wider. Below that the workspace stacks into one column, and on a phone-width screen the budget flow gives way to the program list, which carries the same numbers.</p><Header state={state} webMcpStatus={webMcpStatus} onReset={() => dispatch({ type: 'reset', meta: { actor: 'human', action: 'reset', summary: 'reset the demo' } })} /><div className="workspace-top"><BudgetCanvas state={state} selectedProgram={selectedProgram} onSelectProgram={setSelectedProgram} onTogglePin={togglePin} /><div className="right-top"><DistrictOutcomes state={state} selectedOutcome={selectedOutcome} onSelectOutcome={setSelectedOutcome} selectedDistrict={selectedDistrict} onSelectDistrict={setSelectedDistrict} /><ScenarioRail state={state} dispatch={dispatch} onPinSignature={pinSignature} onSelectProgram={showProgram} /></div></div><div className="workspace-bottom"><Harness state={state} dispatch={dispatch} /><AgentActivity state={state} /><Inspector state={state} selectedProgram={selectedProgram} dispatch={dispatch} /></div><footer>Harbor City is fictional. Outcome indices are illustrative arithmetic over disclosed coefficients, not forecasts or evidence of causation.</footer></main>
+  const webMcpLive = webMcpStatus === 'live'
+  return <main className="civic-app"><ScenarioAnnouncer state={state} /><p className="viewport-notice">Civic is built for a desktop browser at 1280×720 or wider. Below that the workspace stacks into one column, and on a phone-width screen the budget flow gives way to the program list, which carries the same numbers.</p><Header state={state} webMcpStatus={webMcpStatus} onReset={() => dispatch({ type: 'reset', meta: { actor: 'human', action: 'reset', summary: 'reset the demo' } })} /><div className="workspace-top"><BudgetCanvas state={state} selectedProgram={selectedProgram} onSelectProgram={setSelectedProgram} onTogglePin={togglePin} /><div className="right-top"><DistrictOutcomes state={state} selectedOutcome={selectedOutcome} onSelectOutcome={setSelectedOutcome} selectedDistrict={selectedDistrict} onSelectDistrict={setSelectedDistrict} /><ScenarioRail state={state} dispatch={dispatch} onPinSignature={pinSignature} onSelectProgram={showProgram} /></div></div><div className={`workspace-bottom ${webMcpLive ? 'webmcp-live' : ''}`}>{webMcpLive ? null : <Harness state={state} dispatch={dispatch} />}<AgentActivity state={state} webMcpStatus={webMcpStatus} /><Inspector state={state} selectedProgram={selectedProgram} dispatch={dispatch} /></div><footer>Harbor City is fictional. Outcome indices are illustrative arithmetic over disclosed coefficients, not forecasts or evidence of causation.</footer></main>
 }

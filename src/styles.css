@@ -25,6 +25,7 @@ button:focus-visible { outline:2px solid var(--teal); outline-offset:2px; }
 .workspace-top { display:grid; grid-template-columns:minmax(650px,3fr) minmax(300px,1fr); gap:10px; height:370px; margin-top:10px; }
 .right-top { display:grid; grid-template-rows:226px 134px; gap:10px; min-width:0; }
 .workspace-bottom { display:grid; grid-template-columns:minmax(230px,1fr) minmax(390px,2fr) minmax(290px,1.25fr); gap:10px; height:235px; margin-top:10px; }
+.workspace-bottom.webmcp-live { grid-template-columns:minmax(500px,1.7fr) minmax(320px,1fr); }
 .panel,.harness { min-width:0; overflow:hidden; border:1px solid var(--line); background:var(--panel); }
 .panel-heading { height:30px; display:flex; align-items:center; justify-content:space-between; gap:8px; padding:0 10px; color:var(--muted); font-size:7px; }.panel-heading h2{margin:0;font:inherit}.panel-heading>span{white-space:nowrap}
 .budget-body { display:grid; grid-template-columns:95px 105px minmax(0,1fr); height:338px; padding:7px 12px 10px; }.flow-total{padding-top:6px}.flow-total strong{display:block;font:600 10px 'IBM Plex Mono',monospace}.flow-total span{display:block;margin-top:3px;color:var(--muted);font-size:6px}

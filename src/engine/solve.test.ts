@@ -57,6 +57,22 @@ describe('solveScenario', () => {
     })
   })
 
+  it('names a maximum target that crosses a statutory floor', () => {
+    const result = solveScenario({
+      weights: SIGNATURE_WEIGHTS,
+      targets: { emergency: { maximum: 100 } },
+    })
+    expect(result.status).toBe('infeasible')
+    if (result.status !== 'infeasible') return
+    expect(result.reason).toBe('crossed_bounds')
+    expect(result.conflicts).toEqual([{
+      programId: 'emergency',
+      cause: 'target',
+      relation: 'maximum',
+      detail: 'must remain at or below $10.0M',
+    }])
+  })
+
   it('rejects fractional internal money values', () => {
     expect(() => solveScenario({ weights: SIGNATURE_WEIGHTS, pins: { climate: 80.5 } })).toThrow(/integer/)
   })

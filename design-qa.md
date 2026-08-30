@@ -14,7 +14,7 @@
 
 ## Findings
 
-No actionable P0, P1, or P2 differences remain.
+No visual P0, P1, or P2 differences remain in the locally verified fallback states. Deployed WebMCP integration is tracked separately below.
 
 - Fonts and typography: self-hosted Source Serif 4, Inter, and IBM Plex Mono preserve the source hierarchy and technical-instrument character. Dense labels remain legible at the required viewport.
 - Spacing and layout rhythm: the same header, budget canvas, district grid, scenario rail, harness, activity rail, and inspector hierarchy is preserved. The implementation intentionally compresses the source's tall editor preview into the PRD's 1280 × 720 target without hiding persistent controls.
@@ -31,8 +31,11 @@ No actionable P0, P1, or P2 differences remain.
 ## Browser verification
 
 - Primary interactions tested: reset; first proposal; three human pins; firm-target infeasibility; target-free recovery; human acceptance; decision receipt; Libraries selection.
-- A real in-app WebMCP call staged the first visible proposal, returned the post-mutation version, and dynamically swapped the registered tool surface.
-- The pinned schema removed `youth`, `climate`, and `libraries` from `protectedPrograms` and registered `unpin_program` for those IDs.
+- A local runtime integration test injects the browser contract, verifies all four baseline tools register, and
+  confirms that the fallback harness disappears when WebMCP is live. Contract tests verify post-mutation versions,
+  dynamic tool swapping, and schema narrowing. A deployed in-app agent round trip remains a separate gate.
+- Contract tests prove the pinned schema removes `youth`, `climate`, and `libraries` from `protectedPrograms` and
+  registers `unpin_program` for those IDs. This still needs observation in a deployed in-app browser session.
 - Console warnings and errors checked after the complete flow: none.
 
 ## Follow-up polish
@@ -46,7 +49,7 @@ No actionable P0, P1, or P2 differences remain.
 - [x] Fit the entire P0 workspace at 1280 × 720.
 - [x] Keep all signature-flow controls functional.
 - [x] Show Libraries as not modeled.
-- [x] Verify dynamic WebMCP registration in the in-app browser.
+- [ ] Verify dynamic WebMCP registration in the deployed in-app browser.
 - [x] Check the console after the complete flow.
 
 

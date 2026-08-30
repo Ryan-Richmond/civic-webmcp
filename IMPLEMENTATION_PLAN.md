@@ -39,6 +39,18 @@ Date: 2026-08-29
 - **The rail's tool list was a second implementation of the registration rules.** It now reads `civicToolNames`,
   the same builder the runtime registers, with a test pinning them together.
 - **`focus_tradeoffs` moved nothing.** Agent focus now drives the selected program, district, and outcome.
+- **The primary state tool did not satisfy its own contract.** `get_civic_state` now returns baseline and model
+  versions, compact canonical and staged state, the latest accepted scenario, pins, human UI selection, and agent
+  focus. Human selections live in versioned Civic state rather than inaccessible component-local state.
+- **Read calls and receipts were not fully auditable.** Read-only tools now create activity entries without changing
+  `stateVersion`; accepted receipts retain the structured request, complete tool trace, constraint checks, deltas,
+  pins, coefficients, and explicit human decision.
+- **Maximum targets could fail without naming a conflict.** Upper-bound target conflicts now carry a maximum
+  relation, render with a `≤` indicator, and have a regression test.
+- **Tool outputs exceeded current Chrome guidance.** State, model, comparison, and mutation results now use compact
+  agent-facing shapes, with tests enforcing the 1,500-character budget.
+- **The fallback harness competed with WebMCP.** It remains available in unsupported browsers, but disappears when
+  the browser contract is live so the registered tools and their activity trail become the primary lower workspace.
 
 ## Open review decisions
 
@@ -123,12 +135,13 @@ The browser gate for the WebMCP round trip still requires a secure deployed orig
 Gate passed: five timing tests plus browser verification of the wiring. Watching the motion on screen remains a
 human check; the automation pane keeps the document hidden, which pauses `requestAnimationFrame`.
 
-### 6. Submission package — local deliverables complete; deploy, recording, and publication pending approval
+### 6. Submission package — local deliverables complete; public repository created; preview, recording, and submission pending
 
 - Deploy the approved candidate.
 - Capture baseline, proposal, pins, infeasibility, recovery, and receipt screenshots.
 - Record the 150-second walkthrough.
-- Publish the repository and submission materials only after explicit approval.
+- Publish the repository and submission materials only after explicit approval. **Repository published with approval
+  at `https://github.com/Ryan-Richmond/civic-webmcp`; submission materials remain draft.**
 
 Complete: `npm run capture` builds the app, serves it, drives a real Chrome through the whole signature flow,
 and writes the six required states to `audit/submission/` at 1280x720 CSS px, 2x scale. It asserts on the page's
@@ -162,10 +175,8 @@ Still open, and not closable locally:
 - A user identifies a gain and a loss without agent prose. **Needs a human observer.**
 - The recorded walkthrough fits 150 seconds. Script is written to 150s; **needs the recording.**
 
-#### Contradiction to resolve
+#### Evidence record correction
 
-`design-qa.md` states that a real in-app WebMCP call staged a proposal and swapped the tool surface, and its
-checklist ticks "verify dynamic WebMCP registration in the in-app browser". Work package 3 and this package both
-record the in-app round trip as pending a deployed origin, and the app reports `WebMCP unavailable` in local
-testing. Both cannot be true. Ryan should say which record is right before the WebMCP claim goes into the
-submission text.
+The earlier `design-qa.md` statement claiming a real in-app round trip could not be reconciled with the local
+evidence and was removed. Runtime and contract automation now prove registration behavior against an injected
+browser contract; only a deployed HTTPS session in ChatGPT can close the real in-app gate.
