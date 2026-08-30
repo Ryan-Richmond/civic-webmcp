@@ -53,7 +53,8 @@ Date: 2026-08-29
   the browser contract is live so the registered tools and their activity trail become the primary lower workspace.
 - **Version-only updates churned the entire WebMCP registration.** A long in-app run eventually exceeded the
   browser's supported configuration lifecycle. Tool schemas now accept the current positive `stateVersion` and
-  execution still rejects stale calls; re-registration occurs only when names or schemas actually change.
+  execution still rejects stale calls. The three stable core tools register once; only the dynamic scenario group
+  re-registers when names or schemas actually change.
 
 ## Open review decisions
 
@@ -81,7 +82,7 @@ Gate passed: `npm run check` passes and the signature request produces the expec
 
 Gate passed: reducer tests prove staged/canonical separation, stale-version rejection, persistence round trips, and suppression clearing.
 
-### 3. WebMCP boundary — adapter complete; deployed live round trip pending
+### 3. WebMCP boundary — in-app round trip passed on the PR production build
 
 - Register always-available read and focus tools.
 - Swap `preview_scenario` for revise/compare/discard tools based on preview state.
@@ -89,7 +90,7 @@ Gate passed: reducer tests prove staged/canonical separation, stale-version reje
 - Register `unpin_program` and `test_assumption` only in their valid states.
 - Use one abort controller per registration generation so lifecycle changes do not leave duplicate tools.
 
-Local gate passed: contract tests prove the exact tool set and schemas for baseline, staged, pinned, and coefficient-selected states. A secure deployed origin now exists; the browser gate still requires a fresh ChatGPT in-app test.
+Gate passed: contract tests prove the exact tool set and schemas for baseline, staged, pinned, and coefficient-selected states. A fresh in-app browser run against the exact PR production build completed the signature flow and retained WebMCP after acceptance.
 
 ### 4. Instrument interface
 
@@ -99,7 +100,7 @@ Local gate passed: contract tests prove the exact tool set and schemas for basel
 
 Gate: the complete manual signature flow works without WebMCP.
 
-### 5. Accessibility and browser verification — local gate passed; in-app WebMCP round trip pending
+### 5. Accessibility and browser verification — local and in-app gates passed
 
 - Provide semantic controls, keyboard navigation, visible focus, screen-reader summaries, and generous interaction targets.
 - Honor `prefers-reduced-motion` and show a textual change list.
@@ -122,7 +123,8 @@ Every control now meets 24x24. Program rows were raised from 38px to 40px, the m
 District tiles are 56px. If a touch target is ever needed, the existing stacked layout below 1050px already has
 the vertical room for 44px+, and that is where it belongs.
 
-The secure deployed origin is Ready. The remaining browser gate is a fresh ChatGPT in-app WebMCP test.
+The secure deployed origin is Ready. The exact PR production build also passed a fresh ChatGPT in-app WebMCP test;
+the canonical production alias is rechecked after merge.
 
 ### 5b. Motion — complete locally
 
@@ -174,7 +176,7 @@ Settled by test or measurement:
 
 Still open, and not closable locally:
 
-- ChatGPT discovers the expected tools from a fresh in-app browser session. **The HTTPS origin is ready; needs the in-app session.**
+- ChatGPT discovers the expected tools from a fresh in-app browser session. **Passed against the exact PR production build.**
 - A fresh user identifies the largest three baseline programs in under 30 seconds. **Needs a human observer.**
 - A user identifies a gain and a loss without agent prose. **Needs a human observer.**
 - The recorded walkthrough fits 150 seconds. Script is written to 150s; **needs the recording.**
@@ -182,5 +184,5 @@ Still open, and not closable locally:
 #### Evidence record correction
 
 The earlier `design-qa.md` statement claiming a real in-app round trip could not be reconciled with the local
-evidence and was removed. Runtime and contract automation now prove registration behavior against an injected
-browser contract; only a deployed HTTPS session in ChatGPT can close the real in-app gate.
+evidence and was removed. Runtime and contract automation prove registration behavior against an injected browser
+contract, and a fresh in-app run against the exact PR production build now closes the agent-interaction gate.

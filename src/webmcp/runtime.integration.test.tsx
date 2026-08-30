@@ -73,7 +73,7 @@ describe('WebMCP runtime integration', () => {
       )
     })
     await waitFor(() => expect(registered.has('revise_scenario')).toBe(true))
-    expect(registerTool).toHaveBeenCalledTimes(10)
+    expect(registerTool).toHaveBeenCalledTimes(7)
 
     await act(async () => {
       await registered.get('revise_scenario')!.execute(
@@ -81,7 +81,7 @@ describe('WebMCP runtime integration', () => {
         { signal: new AbortController().signal },
       )
     })
-    expect(registerTool).toHaveBeenCalledTimes(10)
+    expect(registerTool).toHaveBeenCalledTimes(7)
   })
 
   it('labels tool definitions honestly and keeps the fallback harness when WebMCP is unavailable', () => {

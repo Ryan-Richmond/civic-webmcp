@@ -15,9 +15,9 @@ function loadInitialState() {
 
 export function useCivicRuntime() {
   const [state, dispatch] = useReducer(civicReducer, undefined, loadInitialState)
-  const [webMcpStatus, setWebMcpStatus] = useState<'unavailable' | 'registering' | 'live' | 'error'>(
-    document.modelContext ? 'registering' : 'unavailable',
-  )
+  const [coreReady, setCoreReady] = useState(false)
+  const [dynamicReady, setDynamicReady] = useState(false)
+  const [registrationError, setRegistrationError] = useState(false)
   const stateRef = useRef(state)
   stateRef.current = state
   const environment = useMemo(() => ({ getState: () => stateRef.current, dispatch }), [])
@@ -33,23 +33,45 @@ export function useCivicRuntime() {
 
   useEffect(() => {
     const modelContext = document.modelContext
-    if (!modelContext) {
-      setWebMcpStatus('unavailable')
-      return
-    }
+    if (!modelContext) return
 
     let current = true
-    setWebMcpStatus('registering')
-    const registration = registerCivicTools(modelContext, state, environment)
+    setCoreReady(false)
+    const registration = registerCivicTools(modelContext, stateRef.current, environment, 'core')
     void registration.ready.then(
-      () => { if (current) setWebMcpStatus('live') },
-      () => { if (current) setWebMcpStatus('error') },
+      () => { if (current) setCoreReady(true) },
+      () => { if (current) setRegistrationError(true) },
+    )
+    return () => {
+      current = false
+      registration.controller.abort()
+    }
+  }, [environment])
+
+  useEffect(() => {
+    const modelContext = document.modelContext
+    if (!modelContext) return
+
+    let current = true
+    setDynamicReady(false)
+    const registration = registerCivicTools(modelContext, stateRef.current, environment, 'dynamic')
+    void registration.ready.then(
+      () => { if (current) setDynamicReady(true) },
+      () => { if (current) setRegistrationError(true) },
     )
     return () => {
       current = false
       registration.controller.abort()
     }
   }, [environment, toolSurfaceKey])
+
+  const webMcpStatus: 'unavailable' | 'registering' | 'live' | 'error' = !document.modelContext
+    ? 'unavailable'
+    : registrationError
+      ? 'error'
+      : coreReady && dynamicReady
+        ? 'live'
+        : 'registering'
 
   return { state, dispatch, webMcpStatus }
 }

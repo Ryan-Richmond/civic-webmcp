@@ -15,6 +15,10 @@ export interface ToolRegistration {
   ready: Promise<void>
 }
 
+export type ToolRegistrationGroup = 'all' | 'core' | 'dynamic'
+
+const CORE_TOOL_NAMES = new Set(['get_civic_state', 'get_model_details', 'focus_tradeoffs'])
+
 const staleResponse = (expected: number, actual: number) => ({
   error: 'stale_state',
   expectedStateVersion: expected,
@@ -336,10 +340,14 @@ export function civicToolSurfaceKey(state: CivicState): string {
   return [state.staged ? 'staged' : 'baseline', pinnedIds.join(','), state.selectedCoefficient ?? ''].join('|')
 }
 
-export function registerCivicTools(modelContext: WebMCP.ModelContext, state: CivicState, environment: ToolEnvironment): ToolRegistration {
+export function registerCivicTools(modelContext: WebMCP.ModelContext, state: CivicState, environment: ToolEnvironment, group: ToolRegistrationGroup = 'all'): ToolRegistration {
   const controller = new AbortController()
+  const tools = buildCivicTools(state, environment).filter(({ name }) => {
+    if (group === 'all') return true
+    return group === 'core' ? CORE_TOOL_NAMES.has(name) : !CORE_TOOL_NAMES.has(name)
+  })
   const ready = Promise.all(
-    buildCivicTools(state, environment).map((tool) => modelContext.registerTool(tool, { signal: controller.signal })),
+    tools.map((tool) => modelContext.registerTool(tool, { signal: controller.signal })),
   ).then(() => undefined)
   return { controller, ready }
 }

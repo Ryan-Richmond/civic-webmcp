@@ -33,9 +33,10 @@ No visual P0, P1, or P2 differences remain in the locally verified fallback stat
 - Primary interactions tested: reset; first proposal; three human pins; firm-target infeasibility; target-free recovery; human acceptance; decision receipt; Libraries selection.
 - A local runtime integration test injects the browser contract, verifies all four baseline tools register, and
   confirms that the fallback harness disappears when WebMCP is live. Contract tests verify post-mutation versions,
-  dynamic tool swapping, and schema narrowing. A deployed in-app agent round trip remains a separate gate.
+  dynamic tool swapping, schema narrowing, and stable-core registration.
 - Contract tests prove the pinned schema removes `youth`, `climate`, and `libraries` from `protectedPrograms` and
-  registers `unpin_program` for those IDs. This still needs observation in a deployed in-app browser session.
+  registers `unpin_program` for those IDs. A fresh in-app browser run against the exact PR production build observed
+  those changes, completed infeasibility and recovery, accepted through the human control, and retained WebMCP live.
 - Console warnings and errors checked after the complete flow: none.
 
 ## Follow-up polish
@@ -49,7 +50,7 @@ No visual P0, P1, or P2 differences remain in the locally verified fallback stat
 - [x] Fit the entire P0 workspace at 1280 × 720.
 - [x] Keep all signature-flow controls functional.
 - [x] Show Libraries as not modeled.
-- [ ] Verify dynamic WebMCP registration in the deployed in-app browser.
+- [x] Verify dynamic WebMCP registration in the in-app browser against the PR production build.
 - [x] Check the console after the complete flow.
 
 

@@ -81,6 +81,21 @@ describe('Civic WebMCP tools', () => {
     expect(options?.signal?.aborted).toBe(true)
   })
 
+  it('can register stable core tools separately from the dynamic surface', async () => {
+    const registerTool = vi.fn((_tool: WebMCP.ModelContextTool, _options?: WebMCP.ModelContextRegisterToolOptions) => Promise.resolve())
+    const context = { registerTool } as unknown as WebMCP.ModelContext
+    const h = harness()
+
+    const core = registerCivicTools(context, h.state, h.environment, 'core')
+    const dynamic = registerCivicTools(context, h.state, h.environment, 'dynamic')
+    await Promise.all([core.ready, dynamic.ready])
+
+    expect(registerTool.mock.calls.slice(0, 3).map(([tool]) => tool.name)).toEqual([
+      'get_civic_state', 'get_model_details', 'focus_tradeoffs',
+    ])
+    expect(registerTool.mock.calls[3]?.[0].name).toBe('preview_scenario')
+  })
+
   it('does not expose scenario acceptance as a tool', () => {
     const h = harness()
     expect(buildCivicTools(h.state, h.environment).map(({ name }) => name)).not.toContain('accept_scenario')
