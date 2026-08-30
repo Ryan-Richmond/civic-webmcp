@@ -16,4 +16,8 @@ h1 { margin: 12px 0; font: 600 clamp(3.5rem, 12vw, 8rem)/0.9 Georgia, serif; }
 .lede { max-width: 560px; color: #565044; font-size: 1.25rem; line-height: 1.5; }
 section { margin-top: 64px; padding: 24px; border: 1px solid #d8d2c3; background: #fffdf8; }
 h2 { margin-top: 0; font: 600 0.8rem/1.2 ui-monospace, monospace; letter-spacing: 0.06em; text-transform: uppercase; }
+dl { display: grid; gap: 8px; margin: 24px 0 0; padding-top: 16px; border-top: 1px solid #e3ded2; }
+dl div { display: flex; justify-content: space-between; gap: 24px; }
+dt { color: #777064; }
+dd { margin: 0; font-family: ui-monospace, monospace; text-align: right; }
 .disclaimer { margin-top: 48px; color: #777064; font-size: 0.8rem; }
