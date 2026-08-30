@@ -84,6 +84,24 @@ describe('WebMCP runtime integration', () => {
     expect(registerTool).toHaveBeenCalledTimes(7)
   })
 
+  it('registers when the host installs modelContext after mount', async () => {
+    const registerTool = vi.fn(() => Promise.resolve())
+    render(<App />)
+
+    // Nothing is available yet: the fallback harness is the honest surface to show.
+    expect(screen.getByText('WebMCP unavailable')).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: 'Agent harness' })).toBeInTheDocument()
+
+    Object.defineProperty(document, 'modelContext', {
+      configurable: true,
+      value: { registerTool } as unknown as WebMCP.ModelContext,
+    })
+
+    await waitFor(() => expect(screen.getByText('WebMCP live')).toBeInTheDocument(), { timeout: 4000 })
+    expect(registerTool).toHaveBeenCalledTimes(4)
+    expect(screen.queryByRole('heading', { name: 'Agent harness' })).not.toBeInTheDocument()
+  })
+
   it('labels tool definitions honestly and keeps the fallback harness when WebMCP is unavailable', () => {
     render(<App />)
 

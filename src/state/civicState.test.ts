@@ -45,6 +45,50 @@ describe('civicReducer', () => {
     expect(state.suppressedCoefficients).toEqual([])
   })
 
+  it('scopes a receipt tool trace to the calls that produced its own scenario', () => {
+    const accept = (id: string) => ({ type: 'accept' as const, id, meta: { actor: 'human' as const, action: 'accept', summary: 'accepted proposal' } })
+    let state = createInitialState()
+    state = civicReducer(state, { type: 'stage', scenario: stagedScenario(), meta: { ...toolMeta, action: 'preview_scenario' } })
+    state = civicReducer(state, accept('scenario-1'))
+    state = civicReducer(state, { type: 'stage', scenario: stagedScenario(), meta: { ...toolMeta, action: 'revise_scenario' } })
+    state = civicReducer(state, accept('scenario-2'))
+
+    expect(state.accepted[0]?.toolTrace.map(({ action }) => action)).toEqual(['preview_scenario'])
+    // The second receipt must not re-report the first receipt's call as its own provenance.
+    expect(state.accepted[1]?.toolTrace.map(({ action }) => action)).toEqual(['revise_scenario'])
+  })
+
+  it('treats view-only selections as non-versioned, so they cannot invalidate an agent turn', () => {
+    const initial = civicReducer(createInitialState(), { type: 'stage', scenario: stagedScenario(), meta: toolMeta })
+    let state = civicReducer(initial, { type: 'setUiSelection', selection: { selectedDistrict: 'river_ward' } })
+    state = civicReducer(state, { type: 'selectCoefficient', coefficientId: 'cf_housing_stability' })
+
+    expect(state.stateVersion).toBe(initial.stateVersion)
+    expect(state.activity).toEqual(initial.activity)
+    expect(state.ui.selectedDistrict).toBe('river_ward')
+    expect(state.selectedCoefficient).toBe('cf_housing_stability')
+  })
+
+  it('rejects saved receipts that predate the scoped tool trace contract', () => {
+    let state = civicReducer(createInitialState(), { type: 'stage', scenario: stagedScenario(), meta: toolMeta })
+    state = civicReducer(state, { type: 'accept', id: 'scenario-1', meta: { actor: 'human', action: 'accept', summary: 'accepted proposal' } })
+    const legacy = JSON.parse(serializePersistentState(state))
+    delete legacy.accepted[0].activityId
+    expect(() => restorePersistentState(JSON.stringify(legacy))).toThrow()
+  })
+
+  it('keeps a receipt trace intact for a scenario accepted after a reload', () => {
+    let state = civicReducer(createInitialState(), { type: 'stage', scenario: stagedScenario(), meta: toolMeta })
+    state = civicReducer(state, { type: 'accept', id: 'scenario-1', meta: { actor: 'human', action: 'accept', summary: 'accepted proposal' } })
+
+    let reloaded = restorePersistentState(serializePersistentState(state))
+    reloaded = civicReducer(reloaded, { type: 'stage', scenario: stagedScenario(), meta: { ...toolMeta, action: 'revise_scenario' } })
+    reloaded = civicReducer(reloaded, { type: 'accept', id: 'scenario-2', meta: { actor: 'human', action: 'accept', summary: 'accepted proposal' } })
+
+    expect(reloaded.accepted[1]?.toolTrace.map(({ action }) => action)).toEqual(['revise_scenario'])
+    expect(reloaded.accepted[1]?.activityId).toBeGreaterThan(reloaded.accepted[0]!.activityId)
+  })
+
   it('round-trips only canonical accepted state', () => {
     let state = civicReducer(createInitialState(), { type: 'stage', scenario: stagedScenario(), meta: toolMeta })
     state = civicReducer(state, { type: 'accept', id: 'scenario-1', meta: { actor: 'human', action: 'accept', summary: 'accepted proposal' } })

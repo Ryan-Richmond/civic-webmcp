@@ -4,6 +4,13 @@ import { civicToolSurfaceKey, registerCivicTools } from '../webmcp/tools'
 
 const STORAGE_KEY = 'civic:state:hc-1.0'
 
+/**
+ * Some hosts install `document.modelContext` after the page's own scripts run. Detecting it only at
+ * mount would strand Civic on the fallback harness for the whole session, so poll briefly, then stop.
+ */
+const DETECT_INTERVAL_MS = 250
+const DETECT_WINDOW_MS = 5000
+
 function loadInitialState() {
   try {
     const saved = window.localStorage.getItem(STORAGE_KEY)
@@ -11,6 +18,25 @@ function loadInitialState() {
   } catch {
     return createInitialState()
   }
+}
+
+function useModelContext(): WebMCP.ModelContext | null {
+  const [modelContext, setModelContext] = useState<WebMCP.ModelContext | null>(() => document.modelContext ?? null)
+
+  useEffect(() => {
+    if (modelContext) return
+    const deadline = Date.now() + DETECT_WINDOW_MS
+    let timer = 0
+    const poll = () => {
+      const found = document.modelContext
+      if (found) return setModelContext(found)
+      if (Date.now() < deadline) timer = window.setTimeout(poll, DETECT_INTERVAL_MS)
+    }
+    timer = window.setTimeout(poll, DETECT_INTERVAL_MS)
+    return () => window.clearTimeout(timer)
+  }, [modelContext])
+
+  return modelContext
 }
 
 export function useCivicRuntime() {
@@ -21,6 +47,7 @@ export function useCivicRuntime() {
   const stateRef = useRef(state)
   stateRef.current = state
   const environment = useMemo(() => ({ getState: () => stateRef.current, dispatch }), [])
+  const modelContext = useModelContext()
   const toolSurfaceKey = civicToolSurfaceKey(state)
 
   useEffect(() => {
@@ -32,7 +59,6 @@ export function useCivicRuntime() {
   }, [state.accepted, state.canonical, state.modelVersion])
 
   useEffect(() => {
-    const modelContext = document.modelContext
     if (!modelContext) return
 
     let current = true
@@ -46,10 +72,9 @@ export function useCivicRuntime() {
       current = false
       registration.controller.abort()
     }
-  }, [environment])
+  }, [environment, modelContext])
 
   useEffect(() => {
-    const modelContext = document.modelContext
     if (!modelContext) return
 
     let current = true
@@ -63,9 +88,9 @@ export function useCivicRuntime() {
       current = false
       registration.controller.abort()
     }
-  }, [environment, toolSurfaceKey])
+  }, [environment, modelContext, toolSurfaceKey])
 
-  const webMcpStatus: 'unavailable' | 'registering' | 'live' | 'error' = !document.modelContext
+  const webMcpStatus: 'unavailable' | 'registering' | 'live' | 'error' = !modelContext
     ? 'unavailable'
     : registrationError
       ? 'error'

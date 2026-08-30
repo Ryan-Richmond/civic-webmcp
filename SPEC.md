@@ -156,6 +156,8 @@ Suppression never enters an accepted scenario or a receipt, and auto-clears on a
 
 `baseline`, `accepted[]`, and `staged | null` are separate. Selectors must never read `staged` when rendering canonical state. Every tool call carries the state version; a stale version fails with a short instruction to re-call `get_civic_state` (PRD §16.3).
 
+`stateVersion` tracks what an agent must re-read, not what the page redrew. Pins, staged scenarios, acceptance, focus, and suppression bump it. View-only selections — the district tile, the outcome tab, the selected coefficient — do not, because a human glancing at the page mid-turn must never invalidate a plan the agent is about to submit.
+
 ---
 
 ## 4. Visual encoding

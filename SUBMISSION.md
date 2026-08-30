@@ -6,7 +6,7 @@ Deliverables required by `PRD.md` section 21, with the state of each:
 
 | Deliverable | State |
 |---|---|
-| Working live URL | Deployed at `https://civic-webmcp.vercel.app`; Vercel reports Ready. In-app WebMCP verification remains open. |
+| Working live URL | Deployed at `https://civic-webmcp.vercel.app`; Vercel reports Ready. A fresh ChatGPT in-app WebMCP round trip passed against the exact pull-request production build; the canonical alias is rechecked after merge. |
 | Public Git repository | Done. `https://github.com/Ryan-Richmond/civic-webmcp`; MIT license detected. |
 | Open-source license visible | Done. MIT in `LICENSE`. |
 | Reproducible local setup | Done. See `README.md`. |

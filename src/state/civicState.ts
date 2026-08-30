@@ -23,6 +23,8 @@ export interface AcceptedScenario {
   allocation: Allocation
   pins: Pins
   stateVersion: number
+  /** Activity id of this scenario's own accept entry; bounds the next receipt's tool trace. */
+  activityId: number
   baselineVersion: string
   modelVersion: string
   request: SolveRequest
@@ -161,6 +163,8 @@ export function civicReducer(state: CivicState, action: CivicAction): CivicState
       return { ...state, ...withActivity(state, action.meta), staged: null, suppressedCoefficients: [] }
     case 'accept': {
       if (state.staged?.result.status !== 'feasible' || stagedPinConflicts(state).length > 0) return state
+      // A receipt reports the calls that produced its own scenario, not every call this session.
+      const previousActivityId = state.accepted.at(-1)?.activityId ?? 0
       const accepted: AcceptedScenario = {
         id: action.id,
         name: state.staged.intent.name,
@@ -169,10 +173,11 @@ export function civicReducer(state: CivicState, action: CivicAction): CivicState
         allocation: { ...state.staged.result.allocation },
         pins: { ...state.pins },
         stateVersion: state.stateVersion + 1,
+        activityId: state.activitySequence + 1,
         baselineVersion: state.baselineVersion,
         modelVersion: state.modelVersion,
         request: state.staged.intent.request,
-        toolTrace: state.activity.filter((entry) => entry.actor === 'tool'),
+        toolTrace: state.activity.filter((entry) => entry.actor === 'tool' && entry.id > previousActivityId),
         constraintChecks: acceptedConstraintChecks(state),
         humanDecision: action.meta.summary,
       }
@@ -186,7 +191,7 @@ export function civicReducer(state: CivicState, action: CivicAction): CivicState
       }
     }
     case 'selectCoefficient':
-      return { ...state, stateVersion: state.stateVersion + 1, selectedCoefficient: action.coefficientId }
+      return { ...state, selectedCoefficient: action.coefficientId }
     case 'setSuppression': {
       const suppressed = new Set(state.suppressedCoefficients)
       if (action.suppressed) suppressed.add(action.coefficientId)
@@ -205,7 +210,7 @@ export function civicReducer(state: CivicState, action: CivicAction): CivicState
         },
       }
     case 'setUiSelection':
-      return { ...state, stateVersion: state.stateVersion + 1, ui: { ...state.ui, ...action.selection } }
+      return { ...state, ui: { ...state.ui, ...action.selection } }
     case 'logActivity':
       return { ...state, ...logActivity(state, action.meta) }
     case 'reset': {
@@ -235,8 +240,11 @@ export function restorePersistentState(serialized: string): CivicState {
   if (parsed.modelVersion !== MODEL_VERSION || !parsed.canonical || !Array.isArray(parsed.accepted)) {
     throw new Error('Saved Civic state is incompatible with the current model')
   }
-  if (parsed.accepted.some((scenario) => !scenario.from || !scenario.pins || !scenario.request || !scenario.toolTrace || !scenario.constraintChecks || !scenario.humanDecision)) {
+  if (parsed.accepted.some((scenario) => !scenario.from || !scenario.pins || !scenario.request || !scenario.toolTrace || !scenario.constraintChecks || !scenario.humanDecision || typeof scenario.activityId !== 'number')) {
     throw new Error('Saved Civic receipts predate the current receipt contract')
   }
-  return { ...createInitialState(), canonical: parsed.canonical, accepted: parsed.accepted }
+  // Activity ids must stay monotonic across a reload, or the next receipt's trace boundary
+  // would sit above every id this session can issue and the trace would come back empty.
+  const activitySequence = parsed.accepted.at(-1)?.activityId ?? 0
+  return { ...createInitialState(), activitySequence, canonical: parsed.canonical, accepted: parsed.accepted }
 }

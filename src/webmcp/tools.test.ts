@@ -157,14 +157,14 @@ describe('Civic WebMCP tools', () => {
     const h = harness()
     h.environment.dispatch({ type: 'setUiSelection', selection: { selectedProgram: 'housing', selectedDistrict: 'river_ward', selectedOutcome: 'mobility' } })
     let tools = buildCivicTools(h.state, h.environment)
-    await tools.find(({ name }) => name === 'preview_scenario')!.execute({ stateVersion: 2, name: 'Accepted', weights: SIGNATURE_WEIGHTS, rationale: 'Accepted scenario' }, { signal: new AbortController().signal })
+    await tools.find(({ name }) => name === 'preview_scenario')!.execute({ stateVersion: h.state.stateVersion, name: 'Accepted', weights: SIGNATURE_WEIGHTS, rationale: 'Accepted scenario' }, { signal: new AbortController().signal })
     h.environment.dispatch({ type: 'accept', id: 'accepted-1', meta: { actor: 'human', action: 'accept', summary: 'accepted the scenario' } })
     tools = buildCivicTools(h.state, h.environment)
     const result = await tools.find(({ name }) => name === 'get_civic_state')!.execute({}, { signal: new AbortController().signal })
 
     expect(result).toMatchObject({
       ui: { selectedProgram: 'housing', selectedDistrict: 'river_ward', selectedOutcome: 'mobility' },
-      latestAccepted: { id: 'accepted-1', name: 'Accepted', stateVersion: 4 },
+      latestAccepted: { id: 'accepted-1', name: 'Accepted', stateVersion: 3 },
     })
     expect(h.state.accepted[0]?.toolTrace.map(({ action }) => action)).toEqual(['preview_scenario'])
     expect(h.state.accepted[0]?.constraintChecks).toHaveLength(4)
@@ -179,20 +179,35 @@ describe('Civic WebMCP tools', () => {
 
     h.environment.dispatch({ type: 'pin', programId: 'climate', value: 80, meta: { actor: 'human', action: 'pin', summary: 'pin climate' } })
     tools = buildCivicTools(h.state, h.environment)
-    await tools.find(({ name }) => name === 'unpin_program')!.execute({ stateVersion: 3, programId: 'climate' }, { signal: new AbortController().signal })
+    await tools.find(({ name }) => name === 'unpin_program')!.execute({ stateVersion: h.state.stateVersion, programId: 'climate' }, { signal: new AbortController().signal })
     expect(h.state.pins).toEqual({})
 
     h.environment.dispatch({ type: 'selectCoefficient', coefficientId: 'cf_housing_stability' })
     tools = buildCivicTools(h.state, h.environment)
-    await tools.find(({ name }) => name === 'test_assumption')!.execute({ stateVersion: 5, coefficientId: 'cf_housing_stability', suppressed: true }, { signal: new AbortController().signal })
+    await tools.find(({ name }) => name === 'test_assumption')!.execute({ stateVersion: h.state.stateVersion, coefficientId: 'cf_housing_stability', suppressed: true }, { signal: new AbortController().signal })
     expect(h.state.suppressedCoefficients).toEqual(['cf_housing_stability'])
 
     tools = buildCivicTools(h.state, h.environment)
-    await tools.find(({ name }) => name === 'preview_scenario')!.execute({ stateVersion: 6, name: 'Discard me', weights: SIGNATURE_WEIGHTS, rationale: 'Discard' }, { signal: new AbortController().signal })
+    await tools.find(({ name }) => name === 'preview_scenario')!.execute({ stateVersion: h.state.stateVersion, name: 'Discard me', weights: SIGNATURE_WEIGHTS, rationale: 'Discard' }, { signal: new AbortController().signal })
     tools = buildCivicTools(h.state, h.environment)
-    await tools.find(({ name }) => name === 'discard_preview')!.execute({ stateVersion: 7 }, { signal: new AbortController().signal })
+    await tools.find(({ name }) => name === 'discard_preview')!.execute({ stateVersion: h.state.stateVersion }, { signal: new AbortController().signal })
     expect(h.state.staged).toBeNull()
     expect(h.state.suppressedCoefficients).toEqual([])
+  })
+
+  it('does not invalidate an agent state version when a human only changes the view', async () => {
+    const h = harness()
+    const read = await buildCivicTools(h.state, h.environment).find(({ name }) => name === 'get_civic_state')!
+      .execute({}, { signal: new AbortController().signal }) as { stateVersion: number }
+
+    // The human clicks a district tile and a coefficient while the agent is mid-turn.
+    h.environment.dispatch({ type: 'setUiSelection', selection: { selectedDistrict: 'river_ward' } })
+    h.environment.dispatch({ type: 'selectCoefficient', coefficientId: 'cf_housing_stability' })
+
+    const result = await buildCivicTools(h.state, h.environment).find(({ name }) => name === 'preview_scenario')!
+      .execute({ stateVersion: read.stateVersion, name: 'Still valid', weights: SIGNATURE_WEIGHTS, rationale: 'View changed, plan did not' }, { signal: new AbortController().signal })
+    expect(result).toMatchObject({ status: 'feasible' })
+    expect(h.state.ui.selectedDistrict).toBe('river_ward')
   })
 
   it('returns the post-mutation state version', async () => {

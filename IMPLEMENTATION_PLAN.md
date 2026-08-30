@@ -55,6 +55,21 @@ Date: 2026-08-29
   browser's supported configuration lifecycle. Tool schemas now accept the current positive `stateVersion` and
   execution still rejects stale calls. The three stable core tools register once; only the dynamic scenario group
   re-registers when names or schemas actually change.
+- **A human click invalidated the agent's turn.** Selecting a district, an outcome tab, or a coefficient bumped
+  `stateVersion`, so any glance at the page between `get_civic_state` and the next call returned `stale_state`.
+  View-only selections are no longer versioned: they change what is displayed, never what an agent must re-read.
+  Optimistic concurrency still guards every real mutation.
+- **Receipts over-claimed their provenance.** A receipt's tool trace was every tool call in the session, so a
+  second accepted scenario re-reported the first one's calls as its own. Each receipt now records the activity id
+  of its own accept and traces only the calls after the previous receipt.
+- **WebMCP was detected once, at mount.** A host that installs `document.modelContext` after the page's scripts
+  run would have stranded Civic on the fallback harness for the whole session. Detection now polls briefly and
+  registers as soon as the contract appears.
+- **The fallback harness recorded a different request than the tool path.** It solved with the canonical
+  allocation and pins applied but stored the bare request, so harness receipts did not reproduce. It now records
+  exactly what it solved.
+- **The solver carried a duplicated bound.** `requestedLower`/`requestedUpper` were written in lockstep with
+  `lower`/`upper` on every branch and were always equal. Removed from the engine and from `EffectiveBound`.
 
 ## Open review decisions
 

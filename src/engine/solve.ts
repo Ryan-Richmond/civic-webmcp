@@ -61,8 +61,6 @@ function effectiveBounds(request: SolveRequest): EffectiveBound[] {
     const capUpper = Math.round(program.baseline * (1 + cap))
     let lower = Math.max(program.minimum, capLower)
     let upper = Math.min(program.maximum, capUpper)
-    let requestedLower = lower
-    let requestedUpper = upper
     let lowerCause: EffectiveBound['lowerCause'] = lower === program.minimum ? 'statute' : 'cap'
     let upperCause: EffectiveBound['upperCause'] = upper === program.maximum ? 'statute' : 'cap'
 
@@ -71,8 +69,6 @@ function effectiveBounds(request: SolveRequest): EffectiveBound[] {
       assertGridValue(pin, `Pin for ${program.id}`)
       lower = pin
       upper = pin
-      requestedLower = pin
-      requestedUpper = pin
       lowerCause = 'pin'
       upperCause = 'pin'
     } else if (protectedSet.has(program.id)) {
@@ -80,8 +76,6 @@ function effectiveBounds(request: SolveRequest): EffectiveBound[] {
       assertGridValue(held, `Canonical allocation for ${program.id}`)
       lower = held
       upper = held
-      requestedLower = held
-      requestedUpper = held
       lowerCause = 'protected'
       upperCause = 'protected'
     }
@@ -89,18 +83,16 @@ function effectiveBounds(request: SolveRequest): EffectiveBound[] {
     const target = request.targets?.[program.id]
     if (target?.minimum !== undefined) {
       assertGridValue(target.minimum, `Minimum target for ${program.id}`)
-      requestedLower = Math.max(requestedLower, target.minimum)
       lower = Math.max(lower, target.minimum)
       lowerCause = 'target'
     }
     if (target?.maximum !== undefined) {
       assertGridValue(target.maximum, `Maximum target for ${program.id}`)
-      requestedUpper = Math.min(requestedUpper, target.maximum)
       upper = Math.min(upper, target.maximum)
       upperCause = 'target'
     }
 
-    return { programId: program.id, lower, upper, requestedLower, requestedUpper, lowerCause, upperCause }
+    return { programId: program.id, lower, upper, lowerCause, upperCause }
   })
 }
 
@@ -125,21 +117,21 @@ function programScores(weights: OutcomeWeights): Record<ProgramId, number> {
 const requestBindings = (bounds: EffectiveBound[]): BindingConstraint[] =>
   bounds.reduce<BindingConstraint[]>((bindings, bound) => {
     if (bound.lowerCause === 'target') {
-      bindings.push({ programId: bound.programId, cause: 'target', relation: 'minimum', detail: `requires at least $${(bound.requestedLower / 10).toFixed(1)}M` })
+      bindings.push({ programId: bound.programId, cause: 'target', relation: 'minimum', detail: `requires at least $${(bound.lower / 10).toFixed(1)}M` })
     }
     else if (bound.lowerCause === 'pin' || bound.lowerCause === 'protected') {
       bindings.push({ programId: bound.programId, cause: bound.lowerCause, relation: 'equal', detail: `held at $${(bound.lower / 10).toFixed(1)}M` })
     }
     if (bound.upperCause === 'target') {
-      bindings.push({ programId: bound.programId, cause: 'target', relation: 'maximum', detail: `must remain at or below $${(bound.requestedUpper / 10).toFixed(1)}M` })
+      bindings.push({ programId: bound.programId, cause: 'target', relation: 'maximum', detail: `must remain at or below $${(bound.upper / 10).toFixed(1)}M` })
     }
     return bindings
   }, [])
 
 export function solveScenario(request: SolveRequest): SolveResult {
   const bounds = effectiveBounds(request)
-  const requiredTotal = bounds.reduce((total, bound) => total + bound.requestedLower, 0)
-  const maximumTotal = bounds.reduce((total, bound) => total + bound.requestedUpper, 0)
+  const requiredTotal = bounds.reduce((total, bound) => total + bound.lower, 0)
+  const maximumTotal = bounds.reduce((total, bound) => total + bound.upper, 0)
   const crossedBounds = bounds.filter((bound) => bound.lower > bound.upper)
 
   if (crossedBounds.length > 0 || requiredTotal > TOTAL_BUDGET || maximumTotal < TOTAL_BUDGET) {
@@ -160,7 +152,7 @@ export function solveScenario(request: SolveRequest): SolveResult {
 
   const scores = programScores(request.weights)
   const allocation = Object.fromEntries(bounds.map((bound) => [bound.programId, bound.lower])) as Allocation
-  let remaining = TOTAL_BUDGET - bounds.reduce((total, bound) => total + bound.lower, 0)
+  let remaining = TOTAL_BUDGET - requiredTotal
   const ranked = [...bounds].sort(
     (left, right) => scores[right.programId] - scores[left.programId] || left.programId.localeCompare(right.programId),
   )

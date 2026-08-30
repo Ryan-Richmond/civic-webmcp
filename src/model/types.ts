@@ -68,8 +68,6 @@ export interface EffectiveBound {
   programId: ProgramId
   lower: number
   upper: number
-  requestedLower: number
-  requestedUpper: number
   lowerCause: BindingConstraint['cause']
   upperCause: BindingConstraint['cause']
 }
