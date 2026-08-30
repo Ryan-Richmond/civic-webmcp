@@ -69,7 +69,12 @@ export function describeScenario(state: CivicState): string {
   const { intent, result } = state.staged
   if (result.status === 'infeasible') {
     const conflicts = result.conflicts.map((binding) => `${programLabel(binding.programId)}, ${binding.detail}`).join('; ')
-    return `No plan for “${intent.name}”. The requested floors require ${formatMoney(result.requiredTotal)} against ${formatMoney(result.availableTotal)} available. ${result.conflicts.length} binding constraints: ${conflicts}. Nothing changed. ${pinNote}`
+    const reason = result.reason === 'minimum_total_exceeds_budget'
+      ? `The requested floors require ${formatMoney(result.requiredTotal)} against ${formatMoney(result.availableTotal)} available.`
+      : result.reason === 'maximum_total_below_budget'
+        ? `The requested ceilings allow at most ${formatMoney(result.maximumTotal)} against ${formatMoney(result.availableTotal)} available.`
+        : `The requested bounds conflict with the effective limits of ${result.conflicts.length} ${result.conflicts.length === 1 ? 'program' : 'programs'}.`
+    return `No plan for “${intent.name}”. ${reason} ${result.conflicts.length} binding constraints: ${conflicts}. Nothing changed. ${pinNote}`
   }
 
   const conflicts = stagedPinConflicts(state)

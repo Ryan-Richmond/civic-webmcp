@@ -10,6 +10,7 @@ import type {
 } from './types'
 
 export const MODEL_VERSION = 'hc-1.0'
+export const BASELINE_VERSION = 'harbor-city-1.0'
 export const TOTAL_BUDGET = 1_000
 export const DEFAULT_CHANGE_CAP = 0.3
 

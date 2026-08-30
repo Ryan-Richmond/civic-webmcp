@@ -39,6 +39,37 @@ Date: 2026-08-29
 - **The rail's tool list was a second implementation of the registration rules.** It now reads `civicToolNames`,
   the same builder the runtime registers, with a test pinning them together.
 - **`focus_tradeoffs` moved nothing.** Agent focus now drives the selected program, district, and outcome.
+- **The primary state tool did not satisfy its own contract.** `get_civic_state` now returns baseline and model
+  versions, compact canonical and staged state, the latest accepted scenario, pins, human UI selection, and agent
+  focus. Human selections live in versioned Civic state rather than inaccessible component-local state.
+- **Read calls and receipts were not fully auditable.** Read-only tools now create activity entries without changing
+  `stateVersion`; accepted receipts retain the structured request, complete tool trace, constraint checks, deltas,
+  pins, coefficients, and explicit human decision.
+- **Maximum targets could fail without naming a conflict.** Upper-bound target conflicts now carry a maximum
+  relation, render with a `≤` indicator, and have a regression test.
+- **Tool outputs exceeded current Chrome guidance.** State, model, comparison, and mutation results now use compact
+  agent-facing shapes, with tests enforcing the 1,500-character budget.
+- **The fallback harness competed with WebMCP.** It remains available in unsupported browsers, but disappears when
+  the browser contract is live so the registered tools and their activity trail become the primary lower workspace.
+- **Version-only updates churned the entire WebMCP registration.** A long in-app run eventually exceeded the
+  browser's supported configuration lifecycle. Tool schemas now accept the current positive `stateVersion` and
+  execution still rejects stale calls. The three stable core tools register once; only the dynamic scenario group
+  re-registers when names or schemas actually change.
+- **A human click invalidated the agent's turn.** Selecting a district, an outcome tab, or a coefficient bumped
+  `stateVersion`, so any glance at the page between `get_civic_state` and the next call returned `stale_state`.
+  View-only selections are no longer versioned: they change what is displayed, never what an agent must re-read.
+  Optimistic concurrency still guards every real mutation.
+- **Receipts over-claimed their provenance.** A receipt's tool trace was every tool call in the session, so a
+  second accepted scenario re-reported the first one's calls as its own. Each receipt now records the activity id
+  of its own accept and traces only the calls after the previous receipt.
+- **WebMCP was detected once, at mount.** A host that installs `document.modelContext` after the page's scripts
+  run would have stranded Civic on the fallback harness for the whole session. Detection now polls briefly and
+  registers as soon as the contract appears.
+- **The fallback harness recorded a different request than the tool path.** It solved with the canonical
+  allocation and pins applied but stored the bare request, so harness receipts did not reproduce. It now records
+  exactly what it solved.
+- **The solver carried a duplicated bound.** `requestedLower`/`requestedUpper` were written in lockstep with
+  `lower`/`upper` on every branch and were always equal. Removed from the engine and from `EffectiveBound`.
 
 ## Open review decisions
 
@@ -66,7 +97,7 @@ Gate passed: `npm run check` passes and the signature request produces the expec
 
 Gate passed: reducer tests prove staged/canonical separation, stale-version rejection, persistence round trips, and suppression clearing.
 
-### 3. WebMCP boundary — adapter complete; live round trip pending deploy
+### 3. WebMCP boundary — in-app round trip passed on the PR production build
 
 - Register always-available read and focus tools.
 - Swap `preview_scenario` for revise/compare/discard tools based on preview state.
@@ -74,7 +105,7 @@ Gate passed: reducer tests prove staged/canonical separation, stale-version reje
 - Register `unpin_program` and `test_assumption` only in their valid states.
 - Use one abort controller per registration generation so lifecycle changes do not leave duplicate tools.
 
-Local gate passed: contract tests prove the exact tool set and schemas for baseline, staged, pinned, and coefficient-selected states. The browser gate still requires a secure deployed origin and ChatGPT in-app test.
+Gate passed: contract tests prove the exact tool set and schemas for baseline, staged, pinned, and coefficient-selected states. A fresh in-app browser run against the exact PR production build completed the signature flow and retained WebMCP after acceptance.
 
 ### 4. Instrument interface
 
@@ -84,7 +115,7 @@ Local gate passed: contract tests prove the exact tool set and schemas for basel
 
 Gate: the complete manual signature flow works without WebMCP.
 
-### 5. Accessibility and browser verification — local gate passed; in-app WebMCP round trip pending deploy
+### 5. Accessibility and browser verification — local and in-app gates passed
 
 - Provide semantic controls, keyboard navigation, visible focus, screen-reader summaries, and generous interaction targets.
 - Honor `prefers-reduced-motion` and show a textual change list.
@@ -107,7 +138,8 @@ Every control now meets 24x24. Program rows were raised from 38px to 40px, the m
 District tiles are 56px. If a touch target is ever needed, the existing stacked layout below 1050px already has
 the vertical room for 44px+, and that is where it belongs.
 
-The browser gate for the WebMCP round trip still requires a secure deployed origin and ChatGPT in-app testing.
+The secure deployed origin is Ready. The exact PR production build also passed a fresh ChatGPT in-app WebMCP test;
+the canonical production alias is rechecked after merge.
 
 ### 5b. Motion — complete locally
 
@@ -123,18 +155,20 @@ The browser gate for the WebMCP round trip still requires a secure deployed orig
 Gate passed: five timing tests plus browser verification of the wiring. Watching the motion on screen remains a
 human check; the automation pane keeps the document hidden, which pauses `requestAnimationFrame`.
 
-### 6. Submission package — local deliverables complete; deploy, recording, and publication pending approval
+### 6. Submission package — repository and deployment live; recording and submission pending
 
 - Deploy the approved candidate.
 - Capture baseline, proposal, pins, infeasibility, recovery, and receipt screenshots.
 - Record the 150-second walkthrough.
-- Publish the repository and submission materials only after explicit approval.
+- Publish the repository and submission materials only after explicit approval. **Repository published with approval
+  at `https://github.com/Ryan-Richmond/civic-webmcp`; submission materials remain draft.**
 
 Complete: `npm run capture` builds the app, serves it, drives a real Chrome through the whole signature flow,
 and writes the six required states to `audit/submission/` at 1280x720 CSS px, 2x scale. It asserts on the page's
 own text at every step, so a drifted UI fails the run rather than producing screenshots of the wrong thing, and
 it fails on any console error or failed request. `SUBMISSION.md` holds the Devpost text, the WebMCP testing
-instructions, and the 150-second shot list. `vercel.json` is configured but nothing has been deployed.
+instructions, and the 150-second shot list. `vercel.json` is deployed at `https://civic-webmcp.vercel.app`; Vercel
+reports Ready and the linked project's production branch is `main`.
 
 Fixed while capturing: the page had no icon link, so every browser requested `/favicon.ico` and got a 404. That
 is a console error on the deployed origin, which PRD section 20 forbids. Now an inline data-URI icon that cannot
@@ -157,15 +191,13 @@ Settled by test or measurement:
 
 Still open, and not closable locally:
 
-- ChatGPT discovers the expected tools from a fresh in-app browser session. **Needs a deployed HTTPS origin.**
+- ChatGPT discovers the expected tools from a fresh in-app browser session. **Passed against the exact PR production build.**
 - A fresh user identifies the largest three baseline programs in under 30 seconds. **Needs a human observer.**
 - A user identifies a gain and a loss without agent prose. **Needs a human observer.**
 - The recorded walkthrough fits 150 seconds. Script is written to 150s; **needs the recording.**
 
-#### Contradiction to resolve
+#### Evidence record correction
 
-`design-qa.md` states that a real in-app WebMCP call staged a proposal and swapped the tool surface, and its
-checklist ticks "verify dynamic WebMCP registration in the in-app browser". Work package 3 and this package both
-record the in-app round trip as pending a deployed origin, and the app reports `WebMCP unavailable` in local
-testing. Both cannot be true. Ryan should say which record is right before the WebMCP claim goes into the
-submission text.
+The earlier `design-qa.md` statement claiming a real in-app round trip could not be reconciled with the local
+evidence and was removed. Runtime and contract automation prove registration behavior against an injected browser
+contract, and a fresh in-app run against the exact PR production build now closes the agent-interaction gate.

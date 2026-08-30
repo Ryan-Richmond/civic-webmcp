@@ -65,7 +65,8 @@ describe('PRD 20 acceptance', () => {
     expect(state.accepted).toHaveLength(1)
     expect(state.accepted[0]!.from).toEqual(BASELINE_ALLOCATION)
     expect(state.canonical).not.toEqual(BASELINE_ALLOCATION)
-    // Every activity id is the state version it produced, so the rail and the agent agree on ordering.
-    expect(state.activity.map((entry) => entry.id)).toEqual([2, 3, 4, 5, 6])
+    // Activity order remains monotonic while each entry records the state version it observed or produced.
+    expect(state.activity.map((entry) => entry.id)).toEqual([1, 2, 3, 4, 5])
+    expect(state.activity.map((entry) => entry.stateVersion)).toEqual([2, 3, 4, 5, 6])
   })
 })

@@ -10,8 +10,14 @@ The product contract is in `PRD.md`, implementation details are in `SPEC.md`, th
 verification gates are in `IMPLEMENTATION_PLAN.md`, and the design and accessibility QA record is in
 `design-qa.md`. Submission materials, testing instructions, and the demo script are in `SUBMISSION.md`.
 
-The current build is local-only and has not been deployed. Vercel is the preferred first target because Civic is
-a static client and requires no managed database, authentication service, or API key.
+The source repository is public at [github.com/Ryan-Richmond/civic-webmcp](https://github.com/Ryan-Richmond/civic-webmcp).
+It is connected to the `civic-webmcp` Vercel project: pull-request branches create previews and reviewed merges to
+`main` create production deployments. Civic is a static client and requires no managed database, authentication
+service, or API key.
+
+Live deployment: [civic-webmcp.vercel.app](https://civic-webmcp.vercel.app). The deployed HTTPS origin is ready.
+A fresh ChatGPT in-app WebMCP round trip passed against the exact pull-request production build; the canonical
+production alias is rechecked after each merge.
 
 ## Local development
 
@@ -45,10 +51,10 @@ disabled, or if the flow produces a single console error or failed request.
 
 ## Using it without an agent
 
-The workspace targets a desktop viewport of 1280x720 or wider. An agent harness in the lower left runs the same
-deterministic engine the WebMCP tools call, so the full flow — proposal, pins, infeasibility, recovery,
-acceptance, receipt — can be exercised with no agent present. The header chip reports whether WebMCP is live in
-the current browser.
+The workspace targets a desktop viewport of 1280x720 or wider. When WebMCP is unavailable, a clearly labeled
+fallback harness runs the same deterministic engine the WebMCP tools call, so the full flow — proposal, pins,
+infeasibility, recovery, acceptance, receipt — can still be tested. When WebMCP is live the fallback is removed
+and the registered tool surface and activity trail take its place. The header chip reports the current status.
 
 See `SUBMISSION.md` for WebMCP testing instructions.
 
@@ -64,4 +70,3 @@ See `SUBMISSION.md` for WebMCP testing instructions.
 ## License
 
 MIT. See `LICENSE`.
-

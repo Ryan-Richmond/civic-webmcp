@@ -60,6 +60,7 @@ export type Pins = Partial<Record<ProgramId, number>>
 export interface BindingConstraint {
   programId: ProgramId
   cause: 'pin' | 'protected' | 'target' | 'cap' | 'statute'
+  relation: 'minimum' | 'maximum' | 'equal'
   detail: string
 }
 
@@ -67,8 +68,6 @@ export interface EffectiveBound {
   programId: ProgramId
   lower: number
   upper: number
-  requestedLower: number
-  requestedUpper: number
   lowerCause: BindingConstraint['cause']
   upperCause: BindingConstraint['cause']
 }

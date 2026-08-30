@@ -4,4 +4,4 @@ coverage/
 .DS_Store
 .vercel/
 *.local
-
+.env.local

@@ -156,6 +156,8 @@ Suppression never enters an accepted scenario or a receipt, and auto-clears on a
 
 `baseline`, `accepted[]`, and `staged | null` are separate. Selectors must never read `staged` when rendering canonical state. Every tool call carries the state version; a stale version fails with a short instruction to re-call `get_civic_state` (PRD §16.3).
 
+`stateVersion` tracks what an agent must re-read, not what the page redrew. Pins, staged scenarios, acceptance, focus, and suppression bump it. View-only selections — the district tile, the outcome tab, the selected coefficient — do not, because a human glancing at the page mid-turn must never invalidate a plan the agent is about to submit.
+
 ---
 
 ## 4. Visual encoding
@@ -222,4 +224,5 @@ Run 2026-08-29 against the fixtures above.
 
 1. **Resolved 08-29:** Libraries and Digital Access is explicitly **not modeled**. No outcome coefficient represents its value; holding it is a visible human values decision.
 2. Coefficient magnitudes are placeholders by construction, but they should not look silly to anyone who has seen a capital budget. Ten minutes of your judgment before anything renders.
-3. Visual direction: three to generate, one to select (PRD §11, §24.1).
+3. **Resolved 08-29:** Direction A, Instrument, was selected from the two explored live-workspace directions; the
+   third direction was waived in PRD §11 and §24.1 before implementation continued.
