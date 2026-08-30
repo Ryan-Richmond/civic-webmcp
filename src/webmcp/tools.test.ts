@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from 'vitest'
 import { SIGNATURE_WEIGHTS } from '../model/fixtures'
 import { civicReducer, createInitialState } from '../state/civicState'
 import type { CivicAction, CivicState } from '../state/civicState'
-import { buildCivicTools, civicToolNames, registerCivicTools } from './tools'
+import { buildCivicTools, civicToolNames, civicToolSurfaceKey, registerCivicTools } from './tools'
 
 function harness(seed = createInitialState()) {
   let state = seed
@@ -40,6 +40,23 @@ describe('Civic WebMCP tools', () => {
     const schema = tool.inputSchema as { properties: { protectedPrograms: { items: { enum: string[] } } } }
     expect(schema.properties.protectedPrograms.items.enum).not.toContain('climate')
     expect(buildCivicTools(h.state, h.environment).map(({ name }) => name)).toContain('unpin_program')
+  })
+
+  it('keeps the registration surface stable across version-only changes', () => {
+    const h = harness()
+    const initialKey = civicToolSurfaceKey(h.state)
+    const tool = buildCivicTools(h.state, h.environment).find(({ name }) => name === 'focus_tradeoffs')!
+    const schema = tool.inputSchema as { properties: { stateVersion: { const?: number; minimum?: number } } }
+
+    expect(schema.properties.stateVersion).toMatchObject({ minimum: 1 })
+    expect(schema.properties.stateVersion.const).toBeUndefined()
+
+    h.environment.dispatch({ type: 'focus', focus: { programs: ['housing'], districts: [], outcomes: [] }, meta: { actor: 'tool', action: 'focus_tradeoffs', summary: 'focus' } })
+    expect(h.state.stateVersion).toBe(2)
+    expect(civicToolSurfaceKey(h.state)).toBe(initialKey)
+
+    h.environment.dispatch({ type: 'pin', programId: 'climate', value: 80, meta: { actor: 'human', action: 'pin', summary: 'pin' } })
+    expect(civicToolSurfaceKey(h.state)).not.toBe(initialKey)
   })
 
   it('rejects stale mutations with recovery instructions', async () => {

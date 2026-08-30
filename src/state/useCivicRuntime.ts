@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useReducer, useRef, useState } from 'react'
 import { civicReducer, createInitialState, restorePersistentState, serializePersistentState } from './civicState'
-import { registerCivicTools } from '../webmcp/tools'
+import { civicToolSurfaceKey, registerCivicTools } from '../webmcp/tools'
 
 const STORAGE_KEY = 'civic:state:hc-1.0'
 
@@ -21,6 +21,7 @@ export function useCivicRuntime() {
   const stateRef = useRef(state)
   stateRef.current = state
   const environment = useMemo(() => ({ getState: () => stateRef.current, dispatch }), [])
+  const toolSurfaceKey = civicToolSurfaceKey(state)
 
   useEffect(() => {
     try {
@@ -48,7 +49,7 @@ export function useCivicRuntime() {
       current = false
       registration.controller.abort()
     }
-  }, [environment, state.stateVersion])
+  }, [environment, toolSurfaceKey])
 
   return { state, dispatch, webMcpStatus }
 }

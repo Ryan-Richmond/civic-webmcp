@@ -51,6 +51,9 @@ Date: 2026-08-29
   agent-facing shapes, with tests enforcing the 1,500-character budget.
 - **The fallback harness competed with WebMCP.** It remains available in unsupported browsers, but disappears when
   the browser contract is live so the registered tools and their activity trail become the primary lower workspace.
+- **Version-only updates churned the entire WebMCP registration.** A long in-app run eventually exceeded the
+  browser's supported configuration lifecycle. Tool schemas now accept the current positive `stateVersion` and
+  execution still rejects stale calls; re-registration occurs only when names or schemas actually change.
 
 ## Open review decisions
 

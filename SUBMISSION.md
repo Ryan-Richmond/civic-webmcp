@@ -96,7 +96,7 @@ Motion eases the allocation rather than the DOM, because the chart library remou
 change. The flow diagram, the program bars, and the district tiles all render from one clock, and displayed
 numbers always read the settled allocation, never an in-flight frame.
 
-52 tests. `npm run check` runs typecheck, tests, and build. The suite directly exercises tool registration,
+54 tests. `npm run check` runs typecheck, tests, and build. The suite directly exercises tool registration,
 dynamic lifecycle, live-versus-fallback UI, every tool execution path, state-version recovery, compact output
 budgets, deterministic arithmetic, and the full receipt contract.
 

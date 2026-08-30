@@ -50,8 +50,8 @@ function parseTargets(value: unknown): Targets | undefined {
   return targets
 }
 
-function stateSchema(version: number) {
-  return { type: 'integer', const: version, description: 'The stateVersion returned by get_civic_state.' }
+function stateSchema() {
+  return { type: 'integer', minimum: 1, description: 'The current stateVersion returned by get_civic_state.' }
 }
 
 const compactAllocation = (allocation: Record<ProgramId, number>) => Object.fromEntries(
@@ -90,7 +90,7 @@ function scenarioSchema(state: CivicState) {
     additionalProperties: false,
     required: ['stateVersion', 'name', 'weights', 'rationale'],
     properties: {
-      stateVersion: stateSchema(state.stateVersion),
+      stateVersion: stateSchema(),
       name: { type: 'string', minLength: 1, maxLength: 80 },
       weights: {
         type: 'object',
@@ -161,7 +161,7 @@ export function buildCivicTools(state: CivicState, environment: ToolEnvironment)
     type: 'object',
     additionalProperties: false,
     required: ['stateVersion'],
-    properties: { stateVersion: stateSchema(state.stateVersion), ...properties },
+    properties: { stateVersion: stateSchema(), ...properties },
   })
   const tools: WebMCP.ModelContextTool[] = [
     {
@@ -328,6 +328,12 @@ export function buildCivicTools(state: CivicState, environment: ToolEnvironment)
 export function civicToolNames(state: CivicState): string[] {
   const inert: ToolEnvironment = { getState: () => state, dispatch: () => {} }
   return buildCivicTools(state, inert).map((tool) => tool.name)
+}
+
+/** Changes only when the registered names or schemas change, avoiding registration churn on ordinary state updates. */
+export function civicToolSurfaceKey(state: CivicState): string {
+  const pinnedIds = PROGRAM_IDS.filter((id) => state.pins[id] !== undefined)
+  return [state.staged ? 'staged' : 'baseline', pinnedIds.join(','), state.selectedCoefficient ?? ''].join('|')
 }
 
 export function registerCivicTools(modelContext: WebMCP.ModelContext, state: CivicState, environment: ToolEnvironment): ToolRegistration {
