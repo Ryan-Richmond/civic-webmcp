@@ -1,0 +1,1243 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style data-omelette-injected>html,body{background:transparent}</style><script data-omelette-injected>(()=>{{const n=new URLSearchParams(location.search).get("theme");if(n==="light"||n==="dark"){document.documentElement.dataset.theme=n}}{if(new URLSearchParams(location.search).get("_omthumb")==="1"){const n=(f)=>{const g=f.focus;if(!g)return;f.focus=function(h){g.call(this,{...h,preventScroll:true})}};n(HTMLElement.prototype);n(SVGElement.prototype);if(typeof MathMLElement!=="undefined"){n(MathMLElement.prototype)}const d=(f)=>{f.removeAttribute("autofocus");f.inert=true;if(!(f instanceof HTMLElement))f.removeAttribute("tabindex")};const p=(f)=>{if(f.hasAttribute("autofocus"))d(f);for(const g of f.querySelectorAll("[autofocus]")){d(g)}};p(document.documentElement);new MutationObserver((f)=>{for(const g of f){for(const h of g.addedNodes){if(h.nodeType===1)p(h)}}}).observe(document,{childList:true,subtree:true})}}{const n=()=>{try{if(document.querySelector('meta[name="color-scheme"]'))return;const d=getComputedStyle(document.documentElement).getPropertyValue("color-scheme").trim();if(d&&d!=="normal")return;const p=(y)=>{if(!y)return null;const m=getComputedStyle(y).backgroundColor.match(/^rgba?\(\s*(\d+)[,\s]+(\d+)[,\s]+(\d+)(?:[,\s/]+([\d.]+%?))?\s*\)$/);if(!m)return null;const w=m[4]==null?1:parseFloat(m[4])/(m[4].endsWith("%")?100:1);if(w<0.99)return null;return[+m[1],+m[2],+m[3]]};const f=p(document.body)||p(document.documentElement);if(!f)return;const g=(y)=>{const m=y/255;return m<=0.04045?m/12.92:((m+0.055)/1.055)**2.4};const h=0.2126*g(f[0])+0.7152*g(f[1])+0.0722*g(f[2]);document.documentElement.style.setProperty("color-scheme",h<0.4?"dark":"light")}catch{}};if(document.readyState==="complete")n();else window.addEventListener("load",n)}var I=[];var B=false;var K=false;var C=()=>{};if(K===true){try{const n=setTimeout.bind(window);const d=1e4;const p=15;const f=1e4;const g=120000;const h=200;const y=(o)=>{try{let r;if(typeof o==="string")r=o;else if(o instanceof URL)r=o.href;else if(typeof Request!=="undefined"&&o instanceof Request)r=o.url;else return null;if(!r)return null;const l=document.baseURI;const i=new URL(r,l);if(i.protocol!=="http:"&&i.protocol!=="https:")return null;if(i.origin!==new URL(l).origin)return null;return i.origin+i.pathname}catch{return null}};const m=new Map;const w=(o)=>{let r=m.get(o);if(!r){if(m.size>=h){const l=m.keys().next().value;if(l!==undefined)m.delete(l)}r={fails:[],until:0,cooldown:f,hard:false};m.set(o,r)}return r};const R=(o)=>{const r=m.get(o);return r!==undefined&&r.until>Date.now()};const O=(o,r)=>{const l=Date.now();const i=w(o);if(r)i.hard=true;if(i.until>l)return;i.fails.push(l);while(i.fails.length>0&&i.fails[0]<=l-d)i.fails.shift();if(i.fails.length>=p){i.until=l+i.cooldown;if(i.hard)i.cooldown=Math.min(i.cooldown*2,g);i.fails.length=0;try{n(()=>{try{S(true)}catch{}},i.until-l+100)}catch{}console.warn("[omelette] asset circuit breaker: pausing requests to "+o+" for "+Math.round((i.until-l)/1000)+"s after "+p+" failures in "+d/1000+"s")}};const e=(o)=>{m.delete(o)};const t=100;const a=new WeakMap;const u=new Set;let s=null;const S=(o)=>{for(const r of Array.from(u)){try{const l=a.get(r);if(l===undefined){u.delete(r);continue}if(o){const i=y(l);if(i!==null&&R(i))continue}a.delete(r);u.delete(r);if(s!==null)s.call(r,l)}catch{}}};C=()=>{try{m.clear();S(false)}catch{}};document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")C()});const _=window.fetch;if(typeof _==="function"){const o=function(...r){let l=null;try{l=y(r[0])}catch{}if(l!==null&&R(l)){let c;try{if(r[1]&&r[1].signal!==undefined){c=r[1].signal||undefined}else if(typeof Request!=="undefined"&&r[0]instanceof Request){c=r[0].signal||undefined}}catch{c=undefined}return new Promise((k,b)=>{const E=()=>{try{return c.reason!==undefined?c.reason:new DOMException("The operation was aborted.","AbortError")}catch{return new DOMException("The operation was aborted.","AbortError")}};try{if(c&&c.aborted){b(E());return}}catch{}let T=false;const j=()=>{if(T)return;T=true;b(E())};try{if(c)c.addEventListener("abort",j,{once:true})}catch{}n(()=>{if(T)return;T=true;try{if(c)c.removeEventListener("abort",j)}catch{}let L;try{L=new Response(null,{status:429,statusText:"Too Many Requests",headers:{"Retry-After":"10"}})}catch{L={ok:false,status:429}}k(L)},250)})}const i=_.apply(window,r);if(l!==null){const c=l;i.then((k)=>{try{if(k.ok)e(c);else if(k.status===401||k.status===403||k.status===404||k.status===429){O(c,k.status!==404)}}catch{}},()=>{})}return i};window.fetch=o}const v=Object.getOwnPropertyDescriptor(HTMLImageElement.prototype,"src");if(v!==undefined&&v.set!==undefined&&v.get!==undefined){const o=v.set;s=o;Object.defineProperty(HTMLImageElement.prototype,"src",{configurable:true,enumerable:v.enumerable,get:v.get,set(r){const l=`${r}`;try{const i=y(l);if(i!==null&&R(i)){a.set(this,l);if(u.size<t)u.add(this);return}}catch{}try{a.delete(this);u.delete(this)}catch{}o.call(this,l)}})}try{const o=HTMLImageElement.prototype.setAttribute;HTMLImageElement.prototype.setAttribute=function(r,l){if(arguments.length<2){o.apply(this,arguments);return}if(typeof r==="string"&&r.toLowerCase()==="src"){const i=`${l}`;try{const c=y(i);if(c!==null&&R(c)){a.set(this,i);if(u.size<t)u.add(this);return}a.delete(this);u.delete(this)}catch{}o.call(this,r,i);return}o.call(this,r,l)}}catch{}window.addEventListener("error",(o)=>{try{const r=o.target;if(r instanceof HTMLImageElement){const l=y(r.currentSrc||r.src||"");if(l!==null)O(l,true)}}catch{}},true);window.addEventListener("load",(o)=>{try{const r=o.target;if(r instanceof HTMLImageElement){const l=y(r.currentSrc||r.src||"");if(l!==null)e(l);const i=a.get(r);if(i!==undefined){let c=false;try{c=new URL(i,document.baseURI).href===new URL(r.currentSrc||r.src||"",document.baseURI).href}catch{c=false}if(c){a.delete(r);u.delete(r)}}}}catch{}},true)}catch{}}var J=30000;var G=3000;document.addEventListener("DOMContentLoaded",()=>{const n=window.Babel;const d="om-src-id";if(n&&n.registerPlugin&&!(n.availablePlugins&&n.availablePlugins[d])){n.registerPlugin(d,({types:h})=>({visitor:{JSXOpeningElement(y,m){const w=y.node;if(w.name&&w.name.type==="JSXMemberExpression")return;for(let t=0;t<w.attributes.length;t++){const a=w.attributes[t];if(a.type==="JSXAttribute"&&a.name&&a.name.name==="data-om-id")return}const R=m.file&&m.file.opts&&m.file.opts.filename||"?";const O=w.loc&&w.loc.start;const e=`jsx:${R}:${w.start??0}:${O?O.line:0}:${O?O.column+1:0}`;w.attributes.push(h.jsxAttribute(h.jsxIdentifier("data-om-id"),h.stringLiteral(e)))}}}))}const p="om-text-extract";let f=false;if(B&&n&&n.registerPlugin&&!(n.availablePlugins&&n.availablePlugins[p])){const h=window.React;if(h&&h.useSyncExternalStore&&h.createElement){f=true;const y={};const m=new Set;let w=0;window.__omTextO=y;window.__omTextSet=(e)=>{for(const t in e){const a=e[t];if(a==null)delete y[t];else y[t]=a}w++;m.forEach((t)=>t())};const R=(e)=>{m.add(e);return()=>m.delete(e)};const O=()=>w;window.__OmT=function e(t){h.useSyncExternalStore(R,O,O);return h.createElement("span",{"data-om-text":t.i,className:"__om-t"},t.i in y?y[t.i]:t.children)};n.registerPlugin(p,({types:e})=>{const t={style:1,script:1,noscript:1,textarea:1,title:1,option:1,text:1,tspan:1,textPath:1};const a={placeholder:1,alt:1,title:1,label:1,"aria-label":1,"aria-description":1,"aria-placeholder":1};const u=(o,r)=>e.logicalExpression("??",e.memberExpression(e.logicalExpression("||",e.memberExpression(e.identifier("window"),e.identifier("__omTextO")),e.objectExpression([])),e.stringLiteral(o),true),r);const s=(o)=>o.file&&o.file.opts&&o.file.opts.filename||"?";const S=(o)=>o.file&&o.file.code||"";const _=(o,r)=>{const l=(c)=>c&&c.start!=null&&c.end!=null&&(c.type==="StringLiteral"||c.type==="TemplateLiteral"&&c.expressions.length===0)?[c.start,c.end]:null;const i=l(r);if(i)return i;if(r&&r.type==="Identifier"){const c=o.scope.getBinding(r.name);if(c&&c.constant&&c.path.node.type==="VariableDeclarator"){return l(c.path.node.init)}}return null};const v=(o,r,l)=>{const i=o.node;let c=false;const k=(E,T)=>{c=true;return e.jsxElement(e.jsxOpeningElement(e.jsxIdentifier("__OmT"),[e.jsxAttribute(e.jsxIdentifier("i"),e.stringLiteral(E))],false),e.jsxClosingElement(e.jsxIdentifier("__OmT")),[T],false)};const b=i.children.map((E)=>{if(E.type==="JSXText"){if(E.start==null||E.end==null)return E;const T=l.slice(E.start,E.end);const j=T.length-T.trimStart().length;const L=T.length-T.trimEnd().length;if(j+L>=T.length)return E;return k(`txt:${r}:${E.start+j}:${E.end-L}`,E)}if(E.type==="JSXExpressionContainer"){const T=_(o,E.expression);if(T)return k(`str:${r}:${T[0]}:${T[1]}`,E)}return E});if(c)i.children=b};return{visitor:{JSXOpeningElement(o,r){const l=o.node;const i=s(r);const c={};for(let k=0;k<l.attributes.length;k++){const b=l.attributes[k];if(b.type!=="JSXAttribute"||!b.name)continue;const E=b.name.name;if(!a[E])continue;if(!b.value||b.value.type!=="StringLiteral")continue;if(b.value.start==null||b.value.end==null)continue;const T=`txt:${i}:${b.value.start}:${b.value.end}`;c[E]=T;b.value=e.jsxExpressionContainer(u(T,e.stringLiteral(b.value.value)))}if(Object.keys(c).length){l.attributes.push(e.jsxAttribute(e.jsxIdentifier("data-om-text-attrs"),e.stringLiteral(JSON.stringify(c))))}},JSXElement(o,r){const l=o.node.openingElement;const i=l&&l.name&&l.name.name;if(i==="__OmT")return;if(typeof i==="string"&&t[i])return;v(o,s(r),S(r))},JSXFragment(o,r){v(o,s(r),S(r))}}}})}}const g=f?["transform-react-jsx-source",d,p]:["transform-react-jsx-source",d];document.querySelectorAll('script[type="text/babel"],script[type="text/jsx"]').forEach((h,y)=>{const m=h.getAttribute("data-plugins")||"";const w=g.filter((R)=>m.indexOf(R)<0);if(w.length){h.setAttribute("data-plugins",m?`${m},${w.join(",")}`:w.join(","))}if(!h.hasAttribute("data-filename")){h.setAttribute("data-filename",h.getAttribute("src")||`inline-${y}`)}})});var A=window.parent;var U="not editable here — open the project in the Claude Design editor to save";var W=()=>Promise.resolve({persisted:false,noHost:true,reason:U});var H=W;var M="data/storage.json";var z=()=>{try{const n=new URL(document.baseURI);const d=n.pathname.match(/\/projects\/([^/]+)\/serve\//);if(d)return d[1];return n.hostname.split(".")[0]||""}catch{return location.hostname.split(".")[0]||""}};var Z=()=>{try{const n=new URL(document.baseURI);const d=n.pathname.indexOf("/serve/");if(d>=0)return n.origin+n.pathname.slice(0,d+"/serve/".length)+M}catch{}return"./"+M};var x=null;var N=()=>{if(!x){x=fetch(Z(),{cache:"no-store"}).then((n)=>{if(n.ok)return n.text();return n.status===404?"":null}).catch(()=>null).then((n)=>{if(n===null){x=null;return null}const d=new Map;if(!n)return d;let p;try{p=JSON.parse(n)}catch{console.warn("[omelette.storage] "+M+" is not valid JSON; treating the store as unreadable so a save cannot overwrite the "+"hand-edited bytes. Fix the JSON (or delete the file) to re-enable persistence.");x=null;return null}if(p===null||typeof p!=="object"||Array.isArray(p)){console.warn("[omelette.storage] "+M+" doesn't hold a JSON object; treating the store as unreadable so a save cannot "+"overwrite the hand-edited bytes. Make the top level a JSON object to re-enable persistence.");x=null;return null}const f=p;if("data"in f){const g=f.data;if(g===null||typeof g!=="object"||Array.isArray(g)){console.warn("[omelette.storage] "+M+' has a "data" field that is not a JSON object; treating the store as unreadable so a '+'save cannot overwrite the hand-edited bytes. Make "data" a JSON object to re-enable persistence.');x=null;return null}const h=f._meta;const y=h!==null&&typeof h==="object"?h.project:undefined;if(typeof y==="string"&&y!==""&&y!==z())return d;for(const m of Object.keys(g))d.set(m,g[m]);return d}for(const g of Object.keys(f)){if(g!=="_meta")d.set(g,f[g])}return d})}return x};var F=(n)=>H(M,JSON.stringify({_meta:{project:z(),version:1},data:Object.fromEntries(n)},null,2));var D=Promise.resolve();var $=(n)=>{const d=D.then(n);D=d.then(()=>{return},()=>{return});return d};var V=/sk-(?:ant-)?[A-Za-z0-9_-]{16,}|AKIA[0-9A-Z]{16}|gh[pousr]_[A-Za-z0-9]{20,}|xox[a-z]-[A-Za-z0-9][A-Za-z0-9-]{9,}|AIza[0-9A-Za-z_-]{30,}|-----BEGIN [A-Z ]*PRIVATE KEY-----/;var Y=/password|passwd|secret|api[_-]?key|access[_-]?token|auth[_-]?token|credential/i;var Q=(n,d,p)=>{if(V.test(d)||Y.test(n)&&typeof p==="string"&&p.length>=8){console.warn('[omelette.storage] the value for "'+n+'" looks like a credential. The storage file is a plaintext project file — visible to '+"everyone with project access and copied when the project is duplicated. Do not store secrets here.")}};var q={persisted:false,reason:"could not load the existing store — not overwriting it"};var X={persisted:false,reason:"stored value changed since a failed read — re-read this key before saving"};var P=new Set;var ee={get:(n)=>{if(typeof n!=="string"){return Promise.reject(new TypeError("storage.get: key must be a string"))}return $(N).then((d)=>{if(d===null){P.add(n);return null}P.delete(n);if(!d.has(n))return null;const p=d.get(n);return p==null?null:JSON.parse(JSON.stringify(p))})},set:(n,d)=>{if(typeof n!=="string"){return Promise.reject(new TypeError("storage.set: key must be a string"))}let p;try{p=JSON.stringify(d)}catch(g){return Promise.reject(new TypeError("storage.set: value must be JSON-serializable ("+String(g)+")"))}if(p===undefined){return Promise.reject(new TypeError("storage.set: value must be JSON-serializable"))}Q(n,p,d);const f=JSON.parse(p);return $(()=>N().then((g)=>{if(g===null)return q;if(P.has(n)){if(g.has(n))return X;P.delete(n)}g.set(n,f);return F(g)}))},delete:(n)=>{if(typeof n!=="string"){return Promise.reject(new TypeError("storage.delete: key must be a string"))}return $(()=>N().then((d)=>{if(d===null)return q;if(P.has(n)){if(d.has(n))return X;P.delete(n)}d.delete(n);return F(d)}))},keys:()=>$(N).then((n)=>n===null?[]:Array.from(n.keys()))};window.omelette={writeFile:(n,d)=>H(n,d).then((p)=>{if(!p.persisted&&!p.noHost){throw new Error(p.reason||"write failed")}}),storage:ee};if(A&&A!==window){const n=(e,t)=>{try{A.postMessage({__omelette_log:true,type:e,data:t},"*")}catch{}};["log","warn","error"].forEach((e)=>{const t=console[e];console[e]=(...a)=>{const u=a.map((s)=>{try{return typeof s==="object"?JSON.stringify(s):String(s)}catch{try{return String(s)}catch{return"[unstringifiable]"}}}).join(" ");n(e,u);t.apply(console,a)}});window.addEventListener("error",(e)=>{const t=e.target;if(t&&t!==window&&t.tagName){const a=t.src||t.href||"";n("resource_error",`${t.tagName} failed to load: ${a}`)}else{n("error",`${e.message||"Unknown error"} at ${e.filename||"?"}:${e.lineno||0}:${e.colno||0}`)}},true);window.addEventListener("unhandledrejection",(e)=>{const t=e.reason;const a=t instanceof Error?`${t.message} ${t.stack}`:String(t);n("error",`Unhandled rejection: ${a}`)});window.addEventListener("click",(e)=>{if(e.defaultPrevented||e.button!==0)return;if(e.metaKey||e.ctrlKey||e.shiftKey||e.altKey)return;const t=e.composedPath?e.composedPath():[];const a=["button","input","select","textarea","summary","label"];let u=null;for(const v of t){if(!(v instanceof Element))continue;if(v.localName==="a"){if(!(v instanceof HTMLAnchorElement))return;u=v;break}if(a.indexOf(v.localName)!==-1)return}if(!u)return;if(u.isContentEditable)return;const s=u.closest("[contenteditable]");if(s&&s.getAttribute("contenteditable")!=="false")return;const S=(u.getAttribute("target")||"_self").toLowerCase();if(S!=="_self"&&S!=="_top"&&S!=="_parent")return;let _;try{_=new URL(u.href)}catch{return}if(_.protocol!=="http:"&&_.protocol!=="https:")return;if(location.origin==="null")return;if(_.origin===location.origin)return;e.preventDefault();window.open(_.href,"_blank","noopener,noreferrer")});const d=()=>{try{A.postMessage({type:"omelette:height",height:document.documentElement.scrollHeight},"*")}catch{}};if(window.ResizeObserver)new ResizeObserver(d).observe(document.documentElement);const p=()=>{d();if(!document.querySelector('script[type="text/babel"],script[type="text/jsx"]'))return;const e=()=>document.getElementById("root")||document.querySelector("body > div[id]");const t=e()?.firstElementChild??null;let a=0;const u=()=>{const s=e();if(s&&s.firstElementChild!==t||++a>30){d();return}setTimeout(u,100)};setTimeout(u,100)};if(document.readyState==="complete")p();else window.addEventListener("load",p);const f={};let g=0;const h=(e)=>new Promise((t,a)=>{if(!I.length){a(new Error("claude.complete: no parent origin"));return}const u=`c${++g}`;const s=()=>setTimeout(()=>{delete f[u];a(new Error(`claude.complete: no data for ${J/1000}s`))},J);const S=s();f[u]={resolve:t,reject:a,text:"",t:S,arm:s};try{for(const _ of I){A.postMessage({__om_api:true,id:u,body:e},_)}}catch(_){clearTimeout(S);delete f[u];a(_)}});const y=8;const m=async(e,t)=>{if(!Array.isArray(e.messages)){throw new Error("claude.complete: tools require a messages array")}const a=e.messages.slice();const u={...e,tools:e.tools.map((_)=>{if(_===null||typeof _!=="object")return _;const v={};for(const o of Object.keys(_)){if(typeof _[o]!=="function")v[o]=_[o]}return v})};const s=u.tool_choice;const S=s!=null&&(s.type==="any"||s.type==="tool")?{...u,tool_choice:s.disable_parallel_tool_use!==undefined?{type:"auto",disable_parallel_tool_use:s.disable_parallel_tool_use}:{type:"auto"}}:u;for(let _=0;_<y;_++){const v=await h({..._===0?u:S,messages:a});const o=v.message;const r=o&&Array.isArray(o.content)?o.content:null;const l=r?r.filter((c)=>c?.type==="tool_use"):[];if(o?.stop_reason!=="tool_use"||l.length===0){return v.text}const i=[];for(const c of l){const k=t.get(c.name);if(!k){i.push({type:"tool_result",tool_use_id:c.id,content:`no handler for tool "${c.name}"`,is_error:true});continue}try{const b=await k(c.input);const E=typeof b==="string"?b:O(b)??"";i.push({type:"tool_result",tool_use_id:c.id,content:E})}catch(b){i.push({type:"tool_result",tool_use_id:c.id,content:String(b?.message??b??"tool handler failed"),is_error:true})}}a.push({role:"assistant",content:r},{role:"user",content:i})}throw new Error(`claude.complete: exceeded ${y} tool turns`)};window.claude={complete(e){const t=e;if(t!==null&&typeof t==="object"&&Array.isArray(t.tools)&&t.tools.some((a)=>a!==null&&typeof a==="object"&&typeof a.run==="function")){const a=new Map;for(const u of t.tools){if(u!==null&&typeof u==="object"&&typeof u.run==="function"){a.set(String(u.name),u.run)}}return m(t,a)}return h(e).then((a)=>a.text)}};const w={};let R=0;H=(e,t)=>new Promise((a)=>{if(!I.length){a({persisted:false,noHost:true,reason:U});return}const u=`f${++R}`;const s=setTimeout(()=>{delete w[u];a({persisted:false,noHost:true,reason:U})},G);w[u]={settle:a,t:s};try{for(const S of I){A.postMessage({__om_file:true,id:u,op:"write",path:e,content:t},S)}}catch{clearTimeout(s);delete w[u];a({persisted:false,noHost:true,reason:U})}});const O=(e)=>{try{return JSON.stringify(e)}catch{return JSON.stringify(String(e))}};window.addEventListener("message",(e)=>{if(I.indexOf(e.origin)<0)return;if(e.source!==A)return;const t=e.data;if(!t)return;if(t.type==="omelette-preview-refresh"){if(typeof t.token!=="string"||!/^[0-9a-f.-]+(\.(rc|pr-[0-9]+))?(\.[0-9]+\.[0-9a-f]{16})?$/.test(t.token))return;const s=Math.max(1,Math.floor((t.expiresAt||0)-Date.now()/1000));document.cookie="__Host-omelette-preview="+t.token+"; Path=/; Secure; SameSite=None; Partitioned; Max-Age="+s;C();return}if(t.__om_file_r){const s=w[t.id];if(!s)return;clearTimeout(s.t);delete w[t.id];s.settle(t.ok?{persisted:true}:{persisted:false,reason:t.error||"write failed"});return}if(t.__om_api_r){const s=f[t.id];if(!s)return;if(t.error!=null){clearTimeout(s.t);delete f[t.id];s.reject(new Error(t.error));return}if(t.chunk!=null){clearTimeout(s.t);s.t=s.arm();s.text+=t.chunk;return}if(t.done){clearTimeout(s.t);delete f[t.id];s.resolve({text:t.text!=null?t.text:s.text,message:t.message});return}return}if(!t.__om_eval)return;const a=t;const u=(s)=>{e.source.postMessage({...s,__om_eval_r:1,id:a.id},e.origin)};try{const s=(0,eval)(a.code);if(s&&typeof s.then==="function"){s.then((S)=>u({ok:1,v:O(S)}),(S)=>u({ok:0,e:String(S)}))}else{u({ok:1,v:O(s)})}}catch(s){u({ok:0,e:String(s)})}})}})();
+</script>
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&family=Archivo:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  html, body { margin: 0; padding: 0; background: #f4f2ec; }
+  * { box-sizing: border-box; }
+  a { color: #1b6f74; text-decoration: none; border-bottom: 1px solid #b8d4d4; }
+  a:hover { color: #0f4b4f; border-bottom-color: #1b6f74; }
+  button { font: inherit; }
+  @keyframes rise { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+</style>
+</helmet>
+
+<sc-if value="{{ showInstrument }}" hint-placeholder-val="{{ true }}">
+<div style="min-height: 100vh; min-width: 1380px; background: #f4f2ec; color: #17160f; font-family: 'IBM Plex Sans', Helvetica, sans-serif; padding: 18px 20px 28px; display: flex; flex-direction: column; gap: 12px;">
+
+  <sc-if value="{{ narrow }}" hint-placeholder-val="{{ false }}">
+    <div style="display: flex; align-items: baseline; gap: 12px; padding: 9px 12px; border: 1px solid #d9c9a8; background: #fbf4e4; color: #7a6636; font-size: 12px;">
+      <span style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; letter-spacing: 0.08em; text-transform: uppercase;">Small viewport</span>
+      <span>Civic targets a desktop browser at 1280&times;720 or wider, so the page scrolls horizontally rather than collapsing. Current width {{ vw }}px.</span>
+    </div>
+  </sc-if>
+
+  <div style="display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; border-bottom: 1px solid #d8d2c4; padding-bottom: 12px;">
+    <div style="display: flex; align-items: flex-end; gap: 18px;">
+      <div style="display: flex; flex-direction: column; gap: 2px;">
+        <div style="font-size: 28px; font-weight: 600; letter-spacing: -0.02em; line-height: 1;">Civic</div>
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: #8a8272;">Public budget studio</div>
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 3px; padding-left: 18px; border-left: 1px solid #ddd7c9;">
+        <div style="font-size: 13px; font-weight: 500;">Harbor City &middot; annual discretionary budget</div>
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: #6f6857;">$100.0M &middot; 8 programs &middot; 6 districts &middot; model {{ modelVersion }} &middot; state v{{ version }}</div>
+      </div>
+    </div>
+    <div style="display: flex; align-items: center; gap: 8px;">
+      <div style="display: flex; gap: 4px; margin-right: 4px;">
+        <sc-for list="{{ dirBtns }}" as="b" hint-placeholder-count="2">
+          <button onClick="{{ b.select }}" style="{{ b.style }}">{{ b.label }}</button>
+        </sc-for>
+      </div>
+      <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; padding: 5px 9px; border: 1px solid #d9c9a8; background: #fbf4e4; color: #7a6636;">Fictional city &middot; illustrative model &middot; not a policy forecast</div>
+      <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; padding: 5px 9px; border: 1px solid #ddd7c9; background: #fffdf8;">{{ mcpLabel }}</div>
+      <button onClick="{{ onReset }}" style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; padding: 6px 10px; border: 1px solid #cfc8b8; background: #fffdf8; color: #4a4536; cursor: pointer;" style-hover="border-color:#17160f; color:#17160f">Reset demo</button>
+    </div>
+  </div>
+
+  <div style="display: grid; grid-template-columns: minmax(0, 1fr) 396px; gap: 12px; align-items: start;">
+
+    <div style="background: #fffdf8; border: 1px solid #e3ded2; padding: 14px 16px 16px;">
+      <div style="display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 10px;">
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: #8a8272;">Budget canvas</div>
+        <div style="display: flex; align-items: center; gap: 14px; font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: #6f6857;">
+          <div style="display: flex; align-items: center; gap: 6px;"><span style="display: inline-block; width: 16px; height: 3px; background: #a9a294;"></span>canonical</div>
+          <div style="display: flex; align-items: center; gap: 6px;"><span style="display: inline-block; width: 16px; height: 0; border-top: 3px dashed #1b6f74;"></span>staged</div>
+          <div style="display: flex; align-items: center; gap: 6px;"><span style="display: inline-block; width: 8px; height: 8px; background: #1b6f74;"></span>increase</div>
+          <div style="display: flex; align-items: center; gap: 6px;"><span style="display: inline-block; width: 8px; height: 8px; background: #a2542c;"></span>decrease</div>
+        </div>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 148px minmax(0, 1fr); gap: 0;">
+        <div style="position: relative;">
+          <svg viewBox="0 0 148 452" width="148" height="452" style="display: block; overflow: visible;">
+            <rect x="2" y="{{ spine.y }}" width="11" height="{{ spine.h }}" fill="#2c2a20"></rect>
+            <sc-for list="{{ flows }}" as="f" hint-placeholder-count="8">
+              <path d="{{ f.d }}" fill="none" stroke="{{ f.stroke }}" stroke-width="{{ f.w }}" stroke-dasharray="{{ f.dash }}" opacity="{{ f.op }}"></path>
+            </sc-for>
+            <sc-for list="{{ ghosts }}" as="g" hint-placeholder-count="0">
+              <path d="{{ g.d }}" fill="none" stroke="#c9c3b3" stroke-width="{{ g.w }}" opacity="0.45"></path>
+            </sc-for>
+          </svg>
+          <div style="position: absolute; left: 18px; top: 8px; font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 600;">$100.0M</div>
+          <div style="position: absolute; left: 18px; top: 24px; font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase; color: #8a8272;">total &middot; fixed</div>
+        </div>
+
+        <div style="padding-top: 10px;">
+          <sc-for list="{{ rows }}" as="r" hint-placeholder-count="8">
+            <div style="height: 54px; display: grid; grid-template-columns: 26px minmax(120px, 1fr) 150px 104px 70px; align-items: center; gap: 10px; border-bottom: 1px solid #efebe1;">
+              <button onClick="{{ r.togglePin }}" title="Pin or unpin this allocation" style="{{ r.pinStyle }}">{{ r.pinGlyph }}</button>
+              <div onClick="{{ r.select }}" style="{{ r.labelStyle }}">
+                <div style="font-size: 13px; font-weight: 500; line-height: 1.2;">{{ r.label }}</div>
+                <div style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; letter-spacing: 0.04em; color: #8a8272; margin-top: 2px;">{{ r.note }}</div>
+              </div>
+              <div style="position: relative; height: 26px; background: #efebe1; border: 1px solid #e3ded2;">
+                <div style="{{ r.baseBar }}"></div>
+                <div style="{{ r.propBar }}"></div>
+              </div>
+              <div style="font-family: 'IBM Plex Mono', monospace; font-size: 12.5px; text-align: right;">{{ r.valueStr }}</div>
+              <div style="{{ r.deltaStyle }}">{{ r.deltaStr }}</div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 12px;">
+      <div style="background: #fffdf8; border: 1px solid #e3ded2; padding: 14px 16px 16px;">
+        <div style="display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 10px;">
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: #8a8272;">District outcomes</div>
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: #6f6857;">index 0&ndash;100</div>
+        </div>
+        <div style="display: flex; gap: 4px; margin-bottom: 12px; flex-wrap: wrap;">
+          <sc-for list="{{ outcomeTabs }}" as="t" hint-placeholder-count="4">
+            <button onClick="{{ t.select }}" style="{{ t.style }}">{{ t.label }}</button>
+          </sc-for>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px;">
+          <sc-for list="{{ tiles }}" as="d" hint-placeholder-count="6">
+            <div onClick="{{ d.select }}" style="{{ d.style }}">
+              <div style="font-size: 10.5px; font-weight: 500; line-height: 1.15; min-height: 24px;">{{ d.label }}</div>
+              <div style="display: flex; align-items: baseline; gap: 5px; margin-top: 6px;">
+                <div style="font-family: 'IBM Plex Mono', monospace; font-size: 20px; font-weight: 600; line-height: 1;">{{ d.valueStr }}</div>
+                <div style="{{ d.deltaStyle }}">{{ d.deltaStr }}</div>
+              </div>
+              <div style="height: 4px; background: #e7e3d8; margin-top: 8px; position: relative;">
+                <div style="{{ d.bar }}"></div>
+              </div>
+              <div style="font-family: 'IBM Plex Mono', monospace; font-size: 8.5px; letter-spacing: 0.05em; text-transform: uppercase; color: #8a8272; margin-top: 5px;">{{ d.worstNote }}</div>
+            </div>
+          </sc-for>
+        </div>
+        <sc-if value="{{ suppressionActive }}" hint-placeholder-val="{{ false }}">
+          <div style="margin-top: 10px; padding: 8px 10px; border: 1px dashed #a2542c; background: repeating-linear-gradient(135deg, #fdf1e9 0 6px, #f8e6d9 6px 12px); font-size: 11px; color: #7d3f1f;">Counterfactual active &mdash; {{ suppressionNote }}. Outcomes are recomputed with that assumption removed and cannot be accepted.</div>
+        </sc-if>
+      </div>
+
+      <div style="background: #fffdf8; border: 1px solid #e3ded2; padding: 14px 16px 16px;">
+        <div style="display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 10px;">
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: #8a8272;">Scenario rail</div>
+          <div style="{{ statusChipStyle }}">{{ statusChip }}</div>
+        </div>
+        <div style="font-size: 12.5px; line-height: 1.45; color: #3c382c; border-left: 2px solid #d8d2c4; padding-left: 10px; min-height: 34px;">{{ requestText }}</div>
+
+        <sc-if value="{{ hasBindings }}" hint-placeholder-val="{{ false }}">
+          <div style="margin-top: 12px;">
+            <div style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; letter-spacing: 0.08em; text-transform: uppercase; color: #8a8272; margin-bottom: 6px;">{{ bindingsHeading }}</div>
+            <div style="display: flex; flex-direction: column; gap: 4px;">
+              <sc-for list="{{ bindings }}" as="b" hint-placeholder-count="3">
+                <div style="{{ b.style }}">
+                  <span style="font-weight: 500;">{{ b.label }}</span>
+                  <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px;">{{ b.detail }}</span>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ hasStaged }}" hint-placeholder-val="{{ false }}">
+          <div style="margin-top: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+            <div>
+              <div style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; letter-spacing: 0.08em; text-transform: uppercase; color: #1b6f74; margin-bottom: 5px;">Largest gains</div>
+              <sc-for list="{{ gains }}" as="g" hint-placeholder-count="2">
+                <div style="font-size: 11.5px; display: flex; justify-content: space-between; gap: 8px; padding: 2px 0;"><span>{{ g.label }}</span><span style="font-family: 'IBM Plex Mono', monospace; color: #1b6f74;">{{ g.value }}</span></div>
+              </sc-for>
+            </div>
+            <div>
+              <div style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; letter-spacing: 0.08em; text-transform: uppercase; color: #a2542c; margin-bottom: 5px;">Largest losses</div>
+              <sc-for list="{{ losses }}" as="l" hint-placeholder-count="2">
+                <div style="font-size: 11.5px; display: flex; justify-content: space-between; gap: 8px; padding: 2px 0;"><span>{{ l.label }}</span><span style="font-family: 'IBM Plex Mono', monospace; color: #a2542c;">{{ l.value }}</span></div>
+              </sc-for>
+            </div>
+          </div>
+        </sc-if>
+
+        <div style="margin-top: 14px; display: flex; gap: 6px; align-items: center;">
+          <button onClick="{{ onAccept }}" style="{{ acceptStyle }}">Accept scenario</button>
+          <button onClick="{{ onDiscard }}" style="{{ discardStyle }}">Discard</button>
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.05em; text-transform: uppercase; color: #8a8272; margin-left: auto; text-align: right; line-height: 1.3;">Human-only<br>controls</div>
+        </div>
+
+        <sc-if value="{{ hasAccepted }}" hint-placeholder-val="{{ false }}">
+          <div style="margin-top: 12px; border-top: 1px solid #efebe1; padding-top: 10px;">
+            <div style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; letter-spacing: 0.08em; text-transform: uppercase; color: #8a8272; margin-bottom: 6px;">Accepted scenarios</div>
+            <sc-for list="{{ acceptedList }}" as="a" hint-placeholder-count="1">
+              <div style="display: flex; justify-content: space-between; gap: 8px; font-size: 11.5px; padding: 3px 0;"><span style="font-weight: 500;">{{ a.name }}</span><span style="font-family: 'IBM Plex Mono', monospace; color: #6f6857;">{{ a.summary }}</span></div>
+            </sc-for>
+          </div>
+        </sc-if>
+      </div>
+    </div>
+  </div>
+
+  <div style="display: grid; grid-template-columns: 360px minmax(0, 1fr) 396px; gap: 12px; align-items: start;">
+
+    <div style="background: #2c2a20; border: 1px solid #2c2a20; padding: 14px 16px 16px; color: #f0ece0;">
+      <div style="display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 4px;">
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: #b6ae99;">Agent harness</div>
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: #8d8674;">local stand-in</div>
+      </div>
+      <div style="font-size: 10.5px; line-height: 1.45; color: #b6ae99; margin-bottom: 12px;">These utterances run the same tool handlers a WebMCP client calls. Nothing here computes an allocation &mdash; the engine does.</div>
+      <div style="display: flex; flex-direction: column; gap: 7px;">
+        <sc-for list="{{ prompts }}" as="p" hint-placeholder-count="4">
+          <button onClick="{{ p.run }}" style="{{ p.style }}" style-hover="border-color:#f0ece0">
+            <div style="font-size: 11.5px; line-height: 1.35; color: #f6f2e6;">{{ p.text }}</div>
+            <div style="font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.04em; color: #9c9482; margin-top: 5px;">{{ p.meta }}</div>
+          </button>
+        </sc-for>
+      </div>
+    </div>
+
+    <div style="background: #fffdf8; border: 1px solid #e3ded2; padding: 14px 16px 16px;">
+      <div style="display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 10px;">
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: #8a8272;">Agent activity</div>
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: #6f6857;">{{ toolCount }} registered &middot; {{ callCount }} calls</div>
+      </div>
+      <div style="display: grid; grid-template-columns: minmax(0, 1fr) 210px; gap: 14px;">
+        <div style="display: flex; flex-direction: column; gap: 3px; max-height: 260px; overflow: auto;">
+          <sc-for list="{{ log }}" as="e" hint-placeholder-count="3">
+            <div style="display: grid; grid-template-columns: 22px 132px 54px minmax(0, 1fr); gap: 8px; align-items: baseline; padding: 4px 0; border-bottom: 1px solid #f2efe6; animation: rise 240ms ease-out;">
+              <div style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; color: #b0a894;">{{ e.n }}</div>
+              <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 500;">{{ e.tool }}</div>
+              <div style="{{ e.kindStyle }}">{{ e.kind }}</div>
+              <div style="font-size: 11px; color: #4a4536; line-height: 1.35;">{{ e.summary }}</div>
+            </div>
+          </sc-for>
+        </div>
+        <div style="border-left: 1px solid #efebe1; padding-left: 12px;">
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; letter-spacing: 0.08em; text-transform: uppercase; color: #8a8272; margin-bottom: 6px;">Live tool surface</div>
+          <div style="display: flex; flex-direction: column; gap: 3px; margin-bottom: 10px;">
+            <sc-for list="{{ toolList }}" as="t" hint-placeholder-count="4">
+              <div style="display: flex; align-items: center; gap: 6px; font-family: 'IBM Plex Mono', monospace; font-size: 10px;">
+                <span style="{{ t.dot }}"></span>
+                <span>{{ t.name }}</span>
+                <span style="color: #a49c88; margin-left: auto;">{{ t.hint }}</span>
+              </div>
+            </sc-for>
+          </div>
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; letter-spacing: 0.08em; text-transform: uppercase; color: #8a8272; margin-bottom: 5px;">protectedPrograms enum</div>
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; line-height: 1.5; color: #3c382c; background: #f6f4ec; border: 1px solid #e7e3d8; padding: 6px 7px; word-break: break-word;">{{ schemaEnum }}</div>
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: #a49c88; margin-top: 5px;">{{ schemaNote }}</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="background: #fffdf8; border: 1px solid #e3ded2; padding: 14px 16px 16px;">
+      <div style="display: flex; gap: 4px; margin-bottom: 12px;">
+        <sc-for list="{{ panelTabs }}" as="t" hint-placeholder-count="2">
+          <button onClick="{{ t.select }}" style="{{ t.style }}">{{ t.label }}</button>
+        </sc-for>
+      </div>
+
+      <sc-if value="{{ showInspector }}" hint-placeholder-val="{{ true }}">
+        <div>
+          <div style="font-size: 13px; font-weight: 600; margin-bottom: 2px;">{{ inspector.title }}</div>
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: #6f6857; margin-bottom: 10px;">{{ inspector.sub }}</div>
+          <div style="display: flex; flex-direction: column; gap: 3px;">
+            <sc-for list="{{ inspector.rows }}" as="r" hint-placeholder-count="4">
+              <div onClick="{{ r.select }}" style="{{ r.style }}">
+                <div style="display: flex; justify-content: space-between; gap: 8px; align-items: baseline;">
+                  <div style="font-size: 11.5px;">{{ r.label }}</div>
+                  <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 500;">{{ r.value }}</div>
+                </div>
+                <div style="font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.04em; color: #8a8272; margin-top: 2px;">{{ r.meta }}</div>
+              </div>
+            </sc-for>
+          </div>
+          <sc-if value="{{ inspector.hasCoefSel }}" hint-placeholder-val="{{ false }}">
+            <div style="margin-top: 10px; border-top: 1px solid #efebe1; padding-top: 10px;">
+              <div style="font-size: 11.5px; line-height: 1.45; color: #3c382c;">{{ inspector.coefNote }}</div>
+              <button onClick="{{ inspector.toggleSuppress }}" style="{{ inspector.suppressStyle }}">{{ inspector.suppressLabel }}</button>
+              <div style="font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: #a49c88; margin-top: 6px;">test_assumption is preview-only, auto-clears on accept or discard, and never writes the model.</div>
+            </div>
+          </sc-if>
+          <div style="margin-top: 12px; border-top: 1px solid #efebe1; padding-top: 10px; font-size: 10.5px; line-height: 1.5; color: #6f6857;">{{ inspector.footer }}</div>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{ showReceipt }}" hint-placeholder-val="{{ false }}">
+        <div>
+          <sc-if value="{{ hasReceipt }}" hint-placeholder-val="{{ false }}">
+            <div>
+              <div style="font-size: 13px; font-weight: 600;">{{ receipt.title }}</div>
+              <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: #6f6857; margin-bottom: 10px;">{{ receipt.stamp }}</div>
+              <div style="font-size: 11.5px; line-height: 1.45; color: #3c382c; border-left: 2px solid #d8d2c4; padding-left: 9px; margin-bottom: 10px;">{{ receipt.request }}</div>
+              <div style="display: flex; flex-direction: column; gap: 3px;">
+                <sc-for list="{{ receipt.lines }}" as="l" hint-placeholder-count="4">
+                  <div style="display: flex; justify-content: space-between; gap: 10px; font-size: 11px; padding: 3px 0; border-bottom: 1px solid #f2efe6;">
+                    <span style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; letter-spacing: 0.05em; text-transform: uppercase; color: #8a8272;">{{ l.k }}</span>
+                    <span style="text-align: right; color: #3c382c;">{{ l.v }}</span>
+                  </div>
+                </sc-for>
+              </div>
+              <div style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; letter-spacing: 0.08em; text-transform: uppercase; color: #8a8272; margin: 12px 0 6px;">Coefficients relied upon</div>
+              <sc-for list="{{ receipt.coefs }}" as="c" hint-placeholder-count="3">
+                <div style="{{ c.style }}">
+                  <span style="font-size: 11px;">{{ c.label }}</span>
+                  <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px;">{{ c.meta }}</span>
+                </div>
+              </sc-for>
+              <div style="margin-top: 10px; font-size: 10.5px; line-height: 1.5; color: #6f6857;">{{ receipt.weakest }}</div>
+            </div>
+          </sc-if>
+          <sc-if value="{{ noReceipt }}" hint-placeholder-val="{{ true }}">
+            <div style="font-size: 11.5px; line-height: 1.5; color: #6f6857;">No decision receipt yet. A receipt is written only when a human accepts a staged scenario &mdash; no agent tool can produce one.</div>
+          </sc-if>
+        </div>
+      </sc-if>
+    </div>
+  </div>
+
+  <div style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; letter-spacing: 0.05em; color: #97907e; text-align: center; padding-top: 4px;">Harbor City is fictional. Outcome indices are illustrative arithmetic over disclosed coefficients, not forecasts or evidence of causation.</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ showRoom }}" hint-placeholder-val="{{ false }}">
+<div style="min-height: 100vh; min-width: 1380px; background: #0e100e; color: #e9e7dd; font-family: 'Archivo', Helvetica, sans-serif; padding: 16px 20px 26px; display: flex; flex-direction: column; gap: 10px;">
+
+  <sc-if value="{{ narrow }}" hint-placeholder-val="{{ false }}">
+    <div style="display: flex; align-items: baseline; gap: 12px; padding: 8px 11px; border: 1px solid #5d4c24; background: #1e1a10; color: #d8bd77; font-size: 12px;">
+      <span style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; letter-spacing: 0.08em; text-transform: uppercase;">Small viewport</span>
+      <span>Desktop 1280&times;720 or wider. The page scrolls horizontally rather than collapsing. Current width {{ vw }}px.</span>
+    </div>
+  </sc-if>
+
+  <div style="display: flex; align-items: center; justify-content: space-between; gap: 20px; padding-bottom: 10px; border-bottom: 1px solid #2b302a;">
+    <div style="display: flex; align-items: center; gap: 16px;">
+      <div style="font-size: 22px; font-weight: 700; letter-spacing: -0.01em;">CIVIC</div>
+      <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: #7f877a; border-left: 1px solid #2b302a; padding-left: 16px;">Harbor City &middot; $100.0M discretionary &middot; model {{ modelVersion }} &middot; state v{{ version }}</div>
+    </div>
+    <div style="display: flex; align-items: center; gap: 8px;">
+      <div style="display: flex; gap: 4px; margin-right: 4px;">
+        <sc-for list="{{ dirBtns }}" as="b" hint-placeholder-count="2">
+          <button onClick="{{ b.select }}" style="{{ b.style }}">{{ b.label }}</button>
+        </sc-for>
+      </div>
+      <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; padding: 5px 9px; border: 1px solid #5d4c24; color: #d8bd77;">Fictional &middot; illustrative &middot; not a forecast</div>
+      <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; padding: 5px 9px; border: 1px solid #2b302a; color: #9aa093;">{{ mcpLabel }}</div>
+      <button onClick="{{ onReset }}" style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.06em; text-transform: uppercase; padding: 6px 10px; border: 1px solid #3c423a; background: #171916; color: #cfd3c8; cursor: pointer;" style-hover="border-color:#e9e7dd">Reset</button>
+    </div>
+  </div>
+
+  <div style="display: grid; grid-template-columns: minmax(0, 1fr) 388px; gap: 10px; align-items: start;">
+
+    <div style="display: flex; flex-direction: column; gap: 10px;">
+      <div style="background: #141614; border: 1px solid #2b302a; padding: 14px 16px 10px;">
+        <div style="display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 12px;">
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: #7f877a;">Allocation flow &middot; $100.0M fixed</div>
+          <div style="display: flex; align-items: center; gap: 14px; font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: #7f877a;">
+            <div style="display: flex; align-items: center; gap: 6px;"><span style="display: inline-block; width: 9px; height: 9px; background: #63cfc4;"></span>increase</div>
+            <div style="display: flex; align-items: center; gap: 6px;"><span style="display: inline-block; width: 9px; height: 9px; background: #e4926a;"></span>decrease</div>
+            <div style="display: flex; align-items: center; gap: 6px;"><span style="display: inline-block; width: 9px; height: 9px; border: 1px dashed #9aa093;"></span>canonical outline</div>
+          </div>
+        </div>
+
+        <div style="height: 8px; background: #e9e7dd; margin-bottom: 0;"></div>
+        <svg viewBox="0 0 1000 128" width="100%" height="128" preserveAspectRatio="none" style="display: block;">
+          <sc-for list="{{ flowsV }}" as="f" hint-placeholder-count="8">
+            <path d="{{ f.d }}" fill="{{ f.fill }}" fill-opacity="{{ f.op }}" stroke="{{ f.stroke }}" stroke-width="0.7" stroke-dasharray="{{ f.dash }}"></path>
+          </sc-for>
+        </svg>
+
+        <div style="display: grid; grid-template-columns: repeat(8, minmax(0, 1fr)); gap: 0;">
+          <sc-for list="{{ rows }}" as="r" hint-placeholder-count="8">
+            <div style="{{ r.colStyle }}">
+              <div style="font-family: 'IBM Plex Mono', monospace; font-size: 15px; font-weight: 600; text-align: center;">{{ r.propOnly }}</div>
+              <div style="{{ r.colDeltaStyle }}">{{ r.deltaStr }}</div>
+              <div style="position: relative; height: 128px; margin: 8px 8px 0; border-bottom: 1px solid #3c423a;">
+                <div style="{{ r.colGhost }}"></div>
+                <div style="{{ r.colBar }}"></div>
+              </div>
+              <div onClick="{{ r.select }}" style="{{ r.colLabelStyle }}">{{ r.label }}</div>
+              <div style="font-family: 'IBM Plex Mono', monospace; font-size: 8.5px; line-height: 1.3; color: #7f877a; text-align: center; min-height: 22px; padding: 0 4px;">{{ r.note }}</div>
+              <div style="display: flex; justify-content: center; padding: 6px 0 2px;">
+                <button onClick="{{ r.togglePin }}" title="Pin or unpin this allocation" style="{{ r.pinStyle }}">{{ r.pinGlyph }}</button>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+
+      <div style="background: #141614; border: 1px solid #2b302a; padding: 14px 16px 16px;">
+        <div style="display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 12px;">
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: #7f877a;">District outcomes &middot; index 0&ndash;100</div>
+          <div style="display: flex; gap: 4px;">
+            <sc-for list="{{ outcomeTabs }}" as="t" hint-placeholder-count="4">
+              <button onClick="{{ t.select }}" style="{{ t.style }}">{{ t.label }}</button>
+            </sc-for>
+          </div>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 6px;">
+          <sc-for list="{{ tiles }}" as="d" hint-placeholder-count="6">
+            <div onClick="{{ d.select }}" style="{{ d.style }}">
+              <div style="font-size: 11px; font-weight: 500; line-height: 1.15; min-height: 26px;">{{ d.label }}</div>
+              <div style="display: flex; align-items: baseline; gap: 6px; margin-top: 6px;">
+                <div style="font-family: 'IBM Plex Mono', monospace; font-size: 24px; font-weight: 600; line-height: 1;">{{ d.valueStr }}</div>
+                <div style="{{ d.deltaStyle }}">{{ d.deltaStr }}</div>
+              </div>
+              <div style="height: 4px; background: #262a25; margin-top: 9px; position: relative;">
+                <div style="{{ d.bar }}"></div>
+              </div>
+              <div style="font-family: 'IBM Plex Mono', monospace; font-size: 8.5px; letter-spacing: 0.04em; text-transform: uppercase; color: #7f877a; margin-top: 6px;">{{ d.worstNote }}</div>
+            </div>
+          </sc-for>
+        </div>
+        <sc-if value="{{ suppressionActive }}" hint-placeholder-val="{{ false }}">
+          <div style="margin-top: 10px; padding: 8px 10px; border: 1px dashed #e4926a; background: repeating-linear-gradient(135deg, #1d1713 0 6px, #241b14 6px 12px); font-size: 11px; color: #e4926a;">Counterfactual active &mdash; {{ suppressionNote }}. Recomputed without that assumption; cannot be accepted.</div>
+        </sc-if>
+      </div>
+
+      <div style="background: #141614; border: 1px solid #2b302a; padding: 14px 16px 16px;">
+        <div style="display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 10px;">
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: #7f877a;">Agent activity</div>
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: #7f877a;">{{ toolCount }} registered &middot; {{ callCount }} calls</div>
+        </div>
+        <div style="display: grid; grid-template-columns: minmax(0, 1fr) 236px; gap: 16px;">
+          <div style="display: flex; flex-direction: column; gap: 2px; max-height: 208px; overflow: auto;">
+            <sc-for list="{{ log }}" as="e" hint-placeholder-count="3">
+              <div style="display: grid; grid-template-columns: 22px 136px 54px minmax(0, 1fr); gap: 8px; align-items: baseline; padding: 4px 0; border-bottom: 1px solid #21251f; animation: rise 240ms ease-out;">
+                <div style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; color: #5f665b;">{{ e.n }}</div>
+                <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 500; color: #e9e7dd;">{{ e.tool }}</div>
+                <div style="{{ e.kindStyle }}">{{ e.kind }}</div>
+                <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10.5px; color: #b3b8ac; line-height: 1.35;">{{ e.summary }}</div>
+              </div>
+            </sc-for>
+          </div>
+          <div style="border-left: 1px solid #21251f; padding-left: 14px;">
+            <div style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; letter-spacing: 0.08em; text-transform: uppercase; color: #7f877a; margin-bottom: 6px;">Live tool surface</div>
+            <div style="display: flex; flex-direction: column; gap: 3px; margin-bottom: 10px;">
+              <sc-for list="{{ toolList }}" as="t" hint-placeholder-count="4">
+                <div style="display: flex; align-items: center; gap: 6px; font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: #cfd3c8;">
+                  <span style="{{ t.dot }}"></span>
+                  <span>{{ t.name }}</span>
+                  <span style="color: #5f665b; margin-left: auto;">{{ t.hint }}</span>
+                </div>
+              </sc-for>
+            </div>
+            <div style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; letter-spacing: 0.08em; text-transform: uppercase; color: #7f877a; margin-bottom: 5px;">protectedPrograms enum</div>
+            <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; line-height: 1.5; color: #63cfc4; background: #101210; border: 1px solid #21251f; padding: 6px 7px; word-break: break-word;">{{ schemaEnum }}</div>
+            <div style="font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: #5f665b; margin-top: 5px;">{{ schemaNote }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 10px;">
+      <div style="background: #141614; border: 1px solid #2b302a; padding: 14px 16px 16px;">
+        <div style="display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 10px;">
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: #7f877a;">Scenario</div>
+          <div style="{{ statusChipStyle }}">{{ statusChip }}</div>
+        </div>
+        <div style="font-size: 12.5px; line-height: 1.45; color: #cfd3c8; border-left: 2px solid #3c423a; padding-left: 10px; min-height: 34px;">{{ requestText }}</div>
+
+        <sc-if value="{{ hasBindings }}" hint-placeholder-val="{{ false }}">
+          <div style="margin-top: 12px;">
+            <div style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; letter-spacing: 0.08em; text-transform: uppercase; color: #7f877a; margin-bottom: 6px;">{{ bindingsHeading }}</div>
+            <div style="display: flex; flex-direction: column; gap: 4px;">
+              <sc-for list="{{ bindings }}" as="b" hint-placeholder-count="3">
+                <div style="{{ b.style }}">
+                  <span style="font-weight: 500;">{{ b.label }}</span>
+                  <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px;">{{ b.detail }}</span>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ hasStaged }}" hint-placeholder-val="{{ false }}">
+          <div style="margin-top: 12px; display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+            <div>
+              <div style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; letter-spacing: 0.08em; text-transform: uppercase; color: #63cfc4; margin-bottom: 5px;">Largest gains</div>
+              <sc-for list="{{ gains }}" as="g" hint-placeholder-count="2">
+                <div style="font-size: 11.5px; display: flex; justify-content: space-between; gap: 8px; padding: 2px 0; color: #cfd3c8;"><span>{{ g.label }}</span><span style="font-family: 'IBM Plex Mono', monospace; color: #63cfc4;">{{ g.value }}</span></div>
+              </sc-for>
+            </div>
+            <div>
+              <div style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; letter-spacing: 0.08em; text-transform: uppercase; color: #e4926a; margin-bottom: 5px;">Largest losses</div>
+              <sc-for list="{{ losses }}" as="l" hint-placeholder-count="2">
+                <div style="font-size: 11.5px; display: flex; justify-content: space-between; gap: 8px; padding: 2px 0; color: #cfd3c8;"><span>{{ l.label }}</span><span style="font-family: 'IBM Plex Mono', monospace; color: #e4926a;">{{ l.value }}</span></div>
+              </sc-for>
+            </div>
+          </div>
+        </sc-if>
+
+        <div style="margin-top: 14px; display: flex; gap: 6px; align-items: center;">
+          <button onClick="{{ onAccept }}" style="{{ acceptStyle }}">Accept scenario</button>
+          <button onClick="{{ onDiscard }}" style="{{ discardStyle }}">Discard</button>
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.05em; text-transform: uppercase; color: #7f877a; margin-left: auto; text-align: right; line-height: 1.3;">Human-only<br>controls</div>
+        </div>
+
+        <sc-if value="{{ hasAccepted }}" hint-placeholder-val="{{ false }}">
+          <div style="margin-top: 12px; border-top: 1px solid #21251f; padding-top: 10px;">
+            <div style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; letter-spacing: 0.08em; text-transform: uppercase; color: #7f877a; margin-bottom: 6px;">Accepted scenarios</div>
+            <sc-for list="{{ acceptedList }}" as="a" hint-placeholder-count="1">
+              <div style="display: flex; justify-content: space-between; gap: 8px; font-size: 11.5px; padding: 3px 0; color: #cfd3c8;"><span style="font-weight: 500;">{{ a.name }}</span><span style="font-family: 'IBM Plex Mono', monospace; color: #7f877a;">{{ a.summary }}</span></div>
+            </sc-for>
+          </div>
+        </sc-if>
+      </div>
+
+      <div style="background: #171916; border: 1px solid #2b302a; padding: 14px 16px 16px;">
+        <div style="display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 4px;">
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: #7f877a;">Agent harness</div>
+          <div style="font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: #5f665b;">local stand-in</div>
+        </div>
+        <div style="font-size: 10.5px; line-height: 1.45; color: #8f968a; margin-bottom: 12px;">Same tool handlers a WebMCP client calls. Nothing here computes an allocation &mdash; the engine does.</div>
+        <div style="display: flex; flex-direction: column; gap: 7px;">
+          <sc-for list="{{ prompts }}" as="p" hint-placeholder-count="4">
+            <button onClick="{{ p.run }}" style="{{ p.style }}" style-hover="border-color:#e9e7dd">
+              <div style="font-size: 11.5px; line-height: 1.35; color: #e9e7dd;">{{ p.text }}</div>
+              <div style="font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.04em; color: #7f877a; margin-top: 5px;">{{ p.meta }}</div>
+            </button>
+          </sc-for>
+        </div>
+      </div>
+
+      <div style="background: #141614; border: 1px solid #2b302a; padding: 14px 16px 16px;">
+        <div style="display: flex; gap: 4px; margin-bottom: 12px;">
+          <sc-for list="{{ panelTabs }}" as="t" hint-placeholder-count="2">
+            <button onClick="{{ t.select }}" style="{{ t.style }}">{{ t.label }}</button>
+          </sc-for>
+        </div>
+
+        <sc-if value="{{ showInspector }}" hint-placeholder-val="{{ true }}">
+          <div>
+            <div style="font-size: 13px; font-weight: 600; margin-bottom: 2px;">{{ inspector.title }}</div>
+            <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: #7f877a; margin-bottom: 10px;">{{ inspector.sub }}</div>
+            <div style="display: flex; flex-direction: column; gap: 3px;">
+              <sc-for list="{{ inspector.rows }}" as="r" hint-placeholder-count="4">
+                <div onClick="{{ r.select }}" style="{{ r.style }}">
+                  <div style="display: flex; justify-content: space-between; gap: 8px; align-items: baseline;">
+                    <div style="font-size: 11.5px;">{{ r.label }}</div>
+                    <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; font-weight: 500;">{{ r.value }}</div>
+                  </div>
+                  <div style="font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: 0.04em; color: #7f877a; margin-top: 2px;">{{ r.meta }}</div>
+                </div>
+              </sc-for>
+            </div>
+            <sc-if value="{{ inspector.hasCoefSel }}" hint-placeholder-val="{{ false }}">
+              <div style="margin-top: 10px; border-top: 1px solid #21251f; padding-top: 10px;">
+                <div style="font-size: 11.5px; line-height: 1.45; color: #cfd3c8;">{{ inspector.coefNote }}</div>
+                <button onClick="{{ inspector.toggleSuppress }}" style="{{ inspector.suppressStyle }}">{{ inspector.suppressLabel }}</button>
+                <div style="font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: #5f665b; margin-top: 6px;">test_assumption is preview-only, auto-clears on accept or discard, and never writes the model.</div>
+              </div>
+            </sc-if>
+            <div style="margin-top: 12px; border-top: 1px solid #21251f; padding-top: 10px; font-size: 10.5px; line-height: 1.5; color: #8f968a;">{{ inspector.footer }}</div>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{ showReceipt }}" hint-placeholder-val="{{ false }}">
+          <div>
+            <sc-if value="{{ hasReceipt }}" hint-placeholder-val="{{ false }}">
+              <div>
+                <div style="font-size: 13px; font-weight: 600;">{{ receipt.title }}</div>
+                <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: #7f877a; margin-bottom: 10px;">{{ receipt.stamp }}</div>
+                <div style="font-size: 11.5px; line-height: 1.45; color: #cfd3c8; border-left: 2px solid #3c423a; padding-left: 9px; margin-bottom: 10px;">{{ receipt.request }}</div>
+                <div style="display: flex; flex-direction: column; gap: 3px;">
+                  <sc-for list="{{ receipt.lines }}" as="l" hint-placeholder-count="4">
+                    <div style="display: flex; justify-content: space-between; gap: 10px; font-size: 11px; padding: 3px 0; border-bottom: 1px solid #21251f;">
+                      <span style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; letter-spacing: 0.05em; text-transform: uppercase; color: #7f877a;">{{ l.k }}</span>
+                      <span style="text-align: right; color: #cfd3c8;">{{ l.v }}</span>
+                    </div>
+                  </sc-for>
+                </div>
+                <div style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; letter-spacing: 0.08em; text-transform: uppercase; color: #7f877a; margin: 12px 0 6px;">Coefficients relied upon</div>
+                <sc-for list="{{ receipt.coefs }}" as="c" hint-placeholder-count="3">
+                  <div style="{{ c.style }}">
+                    <span style="font-size: 11px;">{{ c.label }}</span>
+                    <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px;">{{ c.meta }}</span>
+                  </div>
+                </sc-for>
+                <div style="margin-top: 10px; font-size: 10.5px; line-height: 1.5; color: #8f968a;">{{ receipt.weakest }}</div>
+              </div>
+            </sc-if>
+            <sc-if value="{{ noReceipt }}" hint-placeholder-val="{{ true }}">
+              <div style="font-size: 11.5px; line-height: 1.5; color: #8f968a;">No decision receipt yet. A receipt is written only when a human accepts a staged scenario &mdash; no agent tool can produce one.</div>
+            </sc-if>
+          </div>
+        </sc-if>
+      </div>
+    </div>
+  </div>
+
+  <div style="font-family: 'IBM Plex Mono', monospace; font-size: 9.5px; letter-spacing: 0.05em; color: #5f665b; text-align: center; padding-top: 4px;">Harbor City is fictional. Outcome indices are illustrative arithmetic over disclosed coefficients, not forecasts or evidence of causation.</div>
+</div>
+</sc-if>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1500,&quot;height&quot;:1040},&quot;direction&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Instrument (light)&quot;,&quot;Situation room (dark)&quot;],&quot;default&quot;:&quot;Instrument (light)&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Direction&quot;},&quot;capPercent&quot;:{&quot;editor&quot;:&quot;range&quot;,&quot;default&quot;:30,&quot;min&quot;:10,&quot;max&quot;:50,&quot;step&quot;:5,&quot;unit&quot;:&quot;%&quot;,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Engine&quot;},&quot;reducedMotion&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Presentation&quot;}}">
+const PROGRAMS = [
+  { id: 'housing', label: 'Housing Stability', b: 150, min: 80, max: 300 },
+  { id: 'transit', label: 'Transit and Access', b: 140, min: 80, max: 250 },
+  { id: 'emergency', label: 'Emergency Response', b: 200, min: 180, max: 250 },
+  { id: 'health', label: 'Public Health', b: 110, min: 70, max: 200 },
+  { id: 'youth', label: 'Youth and Learning', b: 140, min: 80, max: 220 },
+  { id: 'climate', label: 'Climate and Parks', b: 80, min: 40, max: 160 },
+  { id: 'libraries', label: 'Libraries and Digital Access', b: 70, min: 50, max: 120 },
+  { id: 'streets', label: 'Streets and Infrastructure', b: 110, min: 70, max: 200 }
+];
+const DISTRICTS = [
+  { id: 'north_harbor', label: 'North Harbor' }, { id: 'east_junction', label: 'East Junction' },
+  { id: 'river_ward', label: 'River Ward' }, { id: 'central', label: 'Central' },
+  { id: 'south_point', label: 'South Point' }, { id: 'west_hills', label: 'West Hills' }
+];
+const OUTCOMES = [
+  { id: 'stability', label: 'Household Stability' }, { id: 'mobility', label: 'Access and Mobility' },
+  { id: 'safety', label: 'Safety and Resilience' }, { id: 'opportunity', label: 'Opportunity and Inclusion' }
+];
+const INC = {
+  housing: { river_ward: .30, south_point: .22, east_junction: .18, north_harbor: .14, central: .11, west_hills: .05 },
+  transit: { east_junction: .28, central: .24, south_point: .20, north_harbor: .13, river_ward: .11, west_hills: .04 },
+  emergency: { central: .22, south_point: .20, river_ward: .19, east_junction: .17, north_harbor: .13, west_hills: .09 },
+  health: { river_ward: .27, south_point: .21, east_junction: .18, central: .16, north_harbor: .12, west_hills: .06 },
+  youth: { south_point: .25, river_ward: .24, east_junction: .19, north_harbor: .15, central: .10, west_hills: .07 },
+  climate: { north_harbor: .24, west_hills: .21, south_point: .19, river_ward: .16, central: .12, east_junction: .08 },
+  libraries: { central: .23, east_junction: .20, south_point: .19, river_ward: .18, north_harbor: .13, west_hills: .07 },
+  streets: { west_hills: .21, south_point: .20, north_harbor: .19, east_junction: .16, river_ward: .13, central: .11 }
+};
+const COEFS = [
+  { id: 'cf_housing_stability', p: 'housing', o: 'stability', v: 1.6, conf: 'low', prov: 'assumed' },
+  { id: 'cf_housing_opportunity', p: 'housing', o: 'opportunity', v: 0.5, conf: 'low', prov: 'assumed' },
+  { id: 'cf_transit_mobility', p: 'transit', o: 'mobility', v: 1.4, conf: 'medium', prov: 'seeded' },
+  { id: 'cf_transit_opportunity', p: 'transit', o: 'opportunity', v: 0.4, conf: 'low', prov: 'assumed' },
+  { id: 'cf_emergency_safety', p: 'emergency', o: 'safety', v: 1.5, conf: 'medium', prov: 'seeded' },
+  { id: 'cf_health_stability', p: 'health', o: 'stability', v: 0.7, conf: 'low', prov: 'assumed' },
+  { id: 'cf_health_safety', p: 'health', o: 'safety', v: 0.6, conf: 'low', prov: 'assumed' },
+  { id: 'cf_youth_opportunity', p: 'youth', o: 'opportunity', v: 1.5, conf: 'low', prov: 'assumed' },
+  { id: 'cf_climate_safety', p: 'climate', o: 'safety', v: 0.9, conf: 'low', prov: 'assumed' },
+  { id: 'cf_libraries_opportunity', p: 'libraries', o: 'opportunity', v: 1.1, conf: 'low', prov: 'assumed' },
+  { id: 'cf_libraries_mobility', p: 'libraries', o: 'mobility', v: 0.3, conf: 'low', prov: 'assumed' },
+  { id: 'cf_streets_mobility', p: 'streets', o: 'mobility', v: 1.0, conf: 'medium', prov: 'seeded' },
+  { id: 'cf_streets_safety', p: 'streets', o: 'safety', v: 0.5, conf: 'low', prov: 'assumed' }
+];
+const BASE_OUT = {
+  north_harbor: { stability: 62, mobility: 55, safety: 68, opportunity: 58 },
+  east_junction: { stability: 54, mobility: 74, safety: 61, opportunity: 63 },
+  river_ward: { stability: 41, mobility: 58, safety: 52, opportunity: 44 },
+  central: { stability: 59, mobility: 78, safety: 66, opportunity: 69 },
+  south_point: { stability: 57, mobility: 62, safety: 63, opportunity: 59 },
+  west_hills: { stability: 74, mobility: 44, safety: 77, opportunity: 71 }
+};
+const PMAP = {}; PROGRAMS.forEach(p => PMAP[p.id] = p);
+const OLABEL = {}; OUTCOMES.forEach(o => OLABEL[o.id] = o.label);
+const DLABEL = {}; DISTRICTS.forEach(d => DLABEL[d.id] = d.label);
+const SIG_WEIGHTS = { stability: .35, mobility: .35, opportunity: .2, safety: .1 };
+const MODEL_V = 'hc-1.0';
+const fmt = t => (t / 10).toFixed(1);
+const sgn = n => (n > 0 ? '+' : n < 0 ? '\u2212' : '') + Math.abs(n).toFixed(1);
+const LIGHT = {
+  teal: '#1b6f74', rust: '#a2542c', neut: '#a9a294', panel: '#fffdf8', alt: '#f6f4ec',
+  line: '#e3ded2', line2: '#eeeae0', text: '#17160f', dim: '#8a8272', track: '#efebe1',
+  barNeut: '#cfc9b9', ink: '#17160f', inkText: '#f6f2e6', tealBg: '#eef5f4', rustBg: '#fdf1e9',
+  tealFill: 'rgba(27,111,116,0.28)', rustFill: 'rgba(162,84,44,0.28)', off: '#bdb6a4'
+};
+const DARK = {
+  teal: '#63cfc4', rust: '#e4926a', neut: '#4b524a', panel: '#141614', alt: '#101210',
+  line: '#2b302a', line2: '#21251f', text: '#e9e7dd', dim: '#7f877a', track: '#262a25',
+  barNeut: '#4b524a', ink: '#e9e7dd', inkText: '#0e100e', tealBg: '#10201f', rustBg: '#1d1713',
+  tealFill: 'rgba(99,207,196,0.30)', rustFill: 'rgba(228,146,106,0.30)', off: '#4b524a'
+};
+
+class Component extends DCLogic {
+  state = {
+    version: 1, pins: {}, staged: null, accepted: [], outcomeSel: 'stability',
+    districtSel: null, programSel: null, coefSel: null, suppressed: {},
+    log: [], request: null, mcp: 'checking', panel: 'inspector', receipt: null, calls: 0,
+    narrow: false, vw: 0, dir: null
+  };
+
+  // ---------- direction ----------
+  dir() { return this.state.dir || (String(this.props.direction || '').indexOf('Situation') === 0 ? 'room' : 'instrument'); }
+  dark() { return this.dir() === 'room'; }
+  P() { return this.dark() ? DARK : LIGHT; }
+
+  // ---------- engine ----------
+  cap() { return (this.props.capPercent ?? 30) / 100; }
+  canonical() {
+    const a = this.state.accepted;
+    if (a.length) return Object.assign({}, a[a.length - 1].alloc);
+    const o = {}; PROGRAMS.forEach(p => o[p.id] = p.b); return o;
+  }
+  coefVal(pid, oid) {
+    const c = COEFS.find(c => c.p === pid && c.o === oid);
+    if (!c || this.state.suppressed[c.id]) return 0;
+    return c.v;
+  }
+  bounds(opts) {
+    const cap = opts.cap ?? this.cap(), can = this.canonical(), pins = this.state.pins;
+    const held = new Set([].concat(opts.protect || [], Object.keys(pins)));
+    return PROGRAMS.map(p => {
+      let lo = p.min, hi = p.max, cause = 'range';
+      const cl = Math.round(p.b * (1 - cap)), ch = Math.round(p.b * (1 + cap));
+      if (cl > lo) { lo = cl; cause = 'cap'; }
+      if (ch < hi) { hi = ch; }
+      let pinned = false, target = null;
+      if (held.has(p.id)) { lo = hi = can[p.id]; pinned = true; cause = pins[p.id] != null ? 'pin' : 'protected'; }
+      const t = (opts.targets || {})[p.id];
+      if (t && t.min != null) { const tm = Math.round(t.min * 10); if (tm > lo) { lo = tm; cause = 'target'; } if (hi < lo) hi = lo; target = t; }
+      if (t && t.max != null) { const tx = Math.round(t.max * 10); if (tx < hi) { hi = tx; cause = 'target'; } if (lo > hi) lo = hi; target = t; }
+      return { id: p.id, lo, hi, pinned, target, cause, capLo: cl, capHi: ch };
+    });
+  }
+  solve(opts) {
+    const bs = this.bounds(opts), byId = {}; bs.forEach(b => byId[b.id] = b);
+    const sumLo = bs.reduce((s, b) => s + b.lo, 0), sumHi = bs.reduce((s, b) => s + b.hi, 0);
+    if (sumLo > 1000 || sumHi < 1000) {
+      const over = sumLo > 1000;
+      const bindings = bs.filter(b => b.pinned || b.target || (over ? b.lo > PMAP[b.id].b : b.hi < PMAP[b.id].b)).map(b => ({
+        program: b.id,
+        cause: b.target ? 'target' : b.cause === 'pin' ? 'pin' : b.cause === 'protected' ? 'protected' : b.cause === 'cap' ? 'cap' : 'statute',
+        detail: b.target ? (b.target.min != null ? '\u2265 $' + b.target.min.toFixed(1) + 'M requested' : '\u2264 $' + b.target.max.toFixed(1) + 'M requested')
+          : b.pinned ? 'held at $' + fmt(b.lo) + 'M by human'
+            : (over ? 'floor $' + fmt(b.lo) + 'M' : 'ceiling $' + fmt(b.hi) + 'M')
+      }));
+      return { feasible: false, bindings, required: over ? sumLo : sumHi, over };
+    }
+    const score = {}; PROGRAMS.forEach(p => {
+      score[p.id] = OUTCOMES.reduce((s, o) => s + (opts.weights[o.id] || 0) * this.coefVal(p.id, o.id), 0);
+    });
+    const alloc = {}; bs.forEach(b => alloc[b.id] = b.lo);
+    let rem = 1000 - sumLo;
+    const order = PROGRAMS.slice().sort((a, b) => score[b.id] - score[a.id] || a.id.localeCompare(b.id));
+    order.forEach(p => { if (rem <= 0) return; const room = byId[p.id].hi - alloc[p.id]; const add = Math.min(room, rem); alloc[p.id] += add; rem -= add; });
+    const can = this.canonical();
+    const bindings = bs.filter(b => !b.pinned && (alloc[b.id] === b.lo || alloc[b.id] === b.hi) && alloc[b.id] !== can[b.id]).map(b => {
+      const atLo = alloc[b.id] === b.lo;
+      const byCap = atLo ? b.lo === b.capLo && b.capLo > PMAP[b.id].min : b.hi === b.capHi && b.capHi < PMAP[b.id].max;
+      return { program: b.id, cause: byCap ? 'cap' : 'statute', detail: (byCap ? 'held by ' + Math.round(this.cap() * 100) + '% change cap at $' : 'held by statutory bound at $') + fmt(alloc[b.id]) + 'M' };
+    });
+    Object.keys(this.state.pins).forEach(id => bindings.unshift({ program: id, cause: 'pin', detail: 'pinned at $' + fmt(alloc[id]) + 'M by human' }));
+    return { feasible: true, alloc, bindings, score };
+  }
+  outcomes(alloc) {
+    const base = {}; PROGRAMS.forEach(p => base[p.id] = p.b);
+    const out = {};
+    DISTRICTS.forEach(d => {
+      out[d.id] = {};
+      OUTCOMES.forEach(o => {
+        let v = BASE_OUT[d.id][o.id];
+        PROGRAMS.forEach(p => { v += ((alloc[p.id] - base[p.id]) / 10) * (INC[p.id][d.id] || 0) * this.coefVal(p.id, o.id); });
+        out[d.id][o.id] = Math.max(0, Math.min(100, v));
+      });
+    });
+    return out;
+  }
+
+  // ---------- tools ----------
+  log(tool, kind, summary) {
+    this.setState(s => ({ log: [{ n: s.log.length + 1, tool, kind, summary }].concat(s.log).slice(0, 40), calls: s.calls + 1 }));
+  }
+  bump() { this.setState(s => ({ version: s.version + 1 })); }
+
+  t_get_civic_state = () => {
+    const s = this.state, can = this.canonical();
+    const out = {
+      modelVersion: MODEL_V, stateVersion: s.version, total: 100,
+      canonical: PROGRAMS.map(p => p.id + ':' + fmt(can[p.id])).join(' '),
+      pins: Object.keys(s.pins).map(id => id + '=' + fmt(s.pins[id])),
+      staged: s.staged ? (s.staged.feasible ? 'feasible ' + s.staged.name : 'infeasible') : null,
+      accepted: s.accepted.length, selectedOutcome: s.outcomeSel
+    };
+    this.log('get_civic_state', 'read', 'v' + s.version + ' \u00b7 pins [' + (out.pins.join(', ') || 'none') + '] \u00b7 staged ' + (out.staged || 'none'));
+    return out;
+  };
+  t_get_model_details = (args) => {
+    const ids = (args && args.programs) || PROGRAMS.map(p => p.id);
+    this.log('get_model_details', 'read', 'bounds + coefficients for ' + ids.length + ' program(s), cap ' + Math.round(this.cap() * 100) + '%, 7 hard constraints');
+    return {
+      cap: this.cap(), constraints: ['total = 100.0', 'program within [min,max]', 'emergency \u2265 18', 'libraries \u2265 5', 'pins immutable to tools', 'versions must match'],
+      programs: ids.map(id => ({ id, bounds: [PMAP[id].min / 10, PMAP[id].max / 10], coefficients: COEFS.filter(c => c.p === id).map(c => c.id + '=' + c.v + ' (' + c.conf + '/' + c.prov + ')') })),
+      disclaimer: 'Fictional city. Illustrative model. Not a policy forecast.'
+    };
+  };
+  t_focus_tradeoffs = (args) => {
+    const a = args || {};
+    this.setState({ programSel: (a.programs || [])[0] || this.state.programSel, districtSel: (a.districts || [])[0] || this.state.districtSel, outcomeSel: a.outcome || this.state.outcomeSel, panel: 'inspector' });
+    this.log('focus_tradeoffs', 'view', 'highlighted ' + [(a.programs || []).join(', '), (a.districts || []).map(d => DLABEL[d]).join(', '), a.outcome ? OLABEL[a.outcome] : ''].filter(Boolean).join(' \u00b7 '));
+    return { ok: true, note: 'visual focus only' };
+  };
+  stage = (tool, args) => {
+    const a = args || {}, name = (a.name || 'Untitled scenario').slice(0, 60);
+    const res = this.solve({ weights: a.weights || SIG_WEIGHTS, protect: a.protect || [], targets: a.targets || {}, cap: a.cap });
+    if (!res.feasible) {
+      const staged = { name, feasible: false, bindings: res.bindings, required: res.required, weights: a.weights, targets: a.targets || {}, rationale: a.rationale || '' };
+      this.setState({ staged, request: a.utterance || this.state.request });
+      this.bump();
+      this.log(tool, 'stage', 'NO PLAN \u00b7 floors require $' + fmt(res.required) + 'M against $100.0M \u00b7 ' + res.bindings.length + ' binding constraints');
+      return { feasible: false, requiredTotal: res.required / 10, budget: 100, bindings: res.bindings.map(b => b.cause + ':' + b.program), advice: 'Drop or lower a target, or ask the human to remove a pin.' };
+    }
+    const can = this.canonical();
+    const moved = PROGRAMS.filter(p => res.alloc[p.id] !== can[p.id]);
+    const staged = { name, feasible: true, alloc: res.alloc, bindings: res.bindings, weights: a.weights || SIG_WEIGHTS, targets: a.targets || {}, protect: a.protect || [], rationale: a.rationale || '' };
+    this.setState({ staged, request: a.utterance || this.state.request });
+    this.bump();
+    this.log(tool, 'stage', 'staged \u00b7 ' + moved.length + ' programs moved \u00b7 largest ' + (moved.length ? PMAP[moved.slice().sort((x, y) => Math.abs(res.alloc[y.id] - can[y.id]) - Math.abs(res.alloc[x.id] - can[x.id]))[0].id].label : '\u2014'));
+    return { feasible: true, allocations: PROGRAMS.map(p => p.id + ':' + fmt(res.alloc[p.id])).join(' '), total: 100, bindings: res.bindings.map(b => b.cause + ':' + b.program) };
+  };
+  t_preview_scenario = (a) => this.stage('preview_scenario', a);
+  t_revise_scenario = (a) => this.stage('revise_scenario', a);
+  t_compare_scenarios = () => {
+    const can = this.canonical(), st = this.state.staged;
+    this.setState({ panel: 'inspector', programSel: null, districtSel: null });
+    this.log('compare_scenarios', 'view', st && st.feasible ? 'canonical vs staged deltas returned' : 'no feasible staged scenario to compare');
+    if (!st || !st.feasible) return { error: 'no feasible staged scenario' };
+    return { deltas: PROGRAMS.map(p => p.id + ':' + sgn((st.alloc[p.id] - can[p.id]) / 10)).join(' ') };
+  };
+  t_discard_preview = () => {
+    this.setState({ staged: null, suppressed: {}, coefSel: null });
+    this.bump();
+    this.log('discard_preview', 'stage', 'staged scenario removed \u00b7 canonical state restored');
+    return { ok: true };
+  };
+  t_unpin_program = (a) => {
+    const id = a && a.program;
+    if (!id || this.state.pins[id] == null) { this.log('unpin_program', 'stage', 'rejected \u00b7 no pin on ' + (id || 'given program')); return { error: 'no such pin' }; }
+    this.setState(s => { const p = Object.assign({}, s.pins); delete p[id]; return { pins: p }; });
+    this.bump();
+    this.log('unpin_program', 'stage', 'pin removed on ' + PMAP[id].label + ' \u00b7 protectedPrograms enum widens');
+    return { ok: true };
+  };
+  t_test_assumption = (a) => {
+    const id = (a && a.coefficient) || this.state.coefSel;
+    if (!id) return { error: 'select a coefficient in the Model Inspector first' };
+    const on = !this.state.suppressed[id];
+    this.setState(s => { const sup = Object.assign({}, s.suppressed); if (on) sup[id] = true; else delete sup[id]; return { suppressed: sup, coefSel: id, panel: 'inspector' }; });
+    this.log('test_assumption', 'view', (on ? 'suppressed ' : 'restored ') + id + ' \u00b7 preview-only mask over derived state');
+    return { ok: true, suppressed: on, note: 'ephemeral; never canonical' };
+  };
+
+  // ---------- WebMCP ----------
+  componentDidMount() {
+    try {
+      const mc = typeof document !== 'undefined' ? document.modelContext : null;
+      this.setState({ mcp: mc && mc.registerTool ? 'live' : 'unavailable' });
+      this._toolKey = this.toolKey();
+      this.registerTools();
+    } catch (e) { console.warn('civic: WebMCP registration skipped \u2014', (e && (e.message || e.name)) || String(e)); }
+    this._onResize = () => { const w = window.innerWidth || 0; if ((w < 1280) !== this.state.narrow || w !== this.state.vw) this.setState({ narrow: w < 1280, vw: w }); };
+    try { this._onResize(); window.addEventListener('resize', this._onResize); } catch (e) { }
+    this.log('get_civic_state', 'read', 'baseline loaded \u00b7 v1 \u00b7 8 programs, 6 districts, model ' + MODEL_V);
+  }
+  componentWillUnmount() { try { window.removeEventListener('resize', this._onResize); } catch (e) { } }
+  toolKey() {
+    const s = this.state;
+    return [!!s.staged, !!(s.staged && s.staged.feasible), Object.keys(s.pins).sort().join(','), s.coefSel || ''].join('|');
+  }
+  componentDidUpdate() {
+    try {
+      const key = this.toolKey();
+      if (key !== this._toolKey) { this._toolKey = key; this.registerTools(); }
+    } catch (e) { console.warn('civic: tool lifecycle update skipped \u2014', (e && (e.message || e.name)) || String(e)); }
+  }
+  registerTools() {
+    const mc = typeof document !== 'undefined' ? document.modelContext : null;
+    if (!mc || !mc.registerTool) return;
+    (this._handles || []).forEach(h => {
+      try { if (h && typeof h.unregister === 'function') h.unregister(); else if (h && typeof mc.unregisterTool === 'function') mc.unregisterTool(h); }
+      catch (e) { console.warn('civic: unregister failed \u2014', (e && (e.message || e.name)) || String(e)); }
+    });
+    this._handles = this.toolDefs().map(d => {
+      try {
+        return mc.registerTool({
+          name: d.name, description: d.description, inputSchema: d.schema, annotations: { readOnlyHint: !!d.readOnly },
+          execute: async (args) => {
+            try { return { content: [{ type: 'text', text: JSON.stringify(this[d.fn](args)) }] }; }
+            catch (err) {
+              const msg = (err && (err.message || err.name)) || String(err);
+              console.warn('civic: tool ' + d.name + ' failed \u2014', msg);
+              return { content: [{ type: 'text', text: JSON.stringify({ error: msg, advice: 'call get_civic_state and retry' }) }], isError: true };
+            }
+          }
+        });
+      } catch (e) { console.warn('civic: could not register ' + d.name + ' \u2014', (e && (e.message || e.name)) || String(e)); return null; }
+    });
+  }
+  unpinnedIds() { return PROGRAMS.filter(p => this.state.pins[p.id] == null).map(p => p.id); }
+  toolDefs() {
+    const s = this.state, enumIds = this.unpinnedIds();
+    const previewSchema = {
+      type: 'object', required: ['name', 'weights'], properties: {
+        name: { type: 'string' }, rationale: { type: 'string' },
+        weights: { type: 'object', properties: OUTCOMES.reduce((a, o) => (a[o.id] = { type: 'number', minimum: 0, maximum: 1 }, a), {}) },
+        protect: { type: 'array', items: { type: 'string', enum: enumIds } },
+        targets: { type: 'object', description: 'firm dollar floors/ceilings the human stated, in $M' },
+        cap: { type: 'number', minimum: 0.05, maximum: 1 }
+      }
+    };
+    const d = [
+      { name: 'get_civic_state', fn: 't_get_civic_state', readOnly: true, description: 'Current Harbor City budget state: canonical allocations, pins, staged scenario, versions.', schema: { type: 'object', properties: {} } },
+      { name: 'get_model_details', fn: 't_get_model_details', readOnly: true, description: 'Program bounds, hard constraints, outcome coefficients with confidence and provenance.', schema: { type: 'object', properties: { programs: { type: 'array', items: { type: 'string' } } } } },
+      { name: 'focus_tradeoffs', fn: 't_focus_tradeoffs', description: 'Highlight programs, districts or an outcome index in the page. Visual only.', schema: { type: 'object', properties: { programs: { type: 'array', items: { type: 'string' } }, districts: { type: 'array', items: { type: 'string' } }, outcome: { type: 'string', enum: OUTCOMES.map(o => o.id) } } } }
+    ];
+    if (!s.staged) d.push({ name: 'preview_scenario', fn: 't_preview_scenario', description: 'Ask the deterministic engine for a feasible allocation from priority weights, protected programs and optional firm targets. Stages a preview; cannot accept.', schema: previewSchema });
+    if (s.staged) {
+      d.push({ name: 'revise_scenario', fn: 't_revise_scenario', description: 'Re-solve the staged scenario against current pins and revised weights or targets.', schema: previewSchema });
+      d.push({ name: 'compare_scenarios', fn: 't_compare_scenarios', readOnly: true, description: 'Return the largest deltas between canonical and staged allocations.', schema: { type: 'object', properties: {} } });
+      d.push({ name: 'discard_preview', fn: 't_discard_preview', description: 'Remove the staged preview and restore canonical state.', schema: { type: 'object', properties: {} } });
+    }
+    if (Object.keys(s.pins).length) d.push({ name: 'unpin_program', fn: 't_unpin_program', description: 'Remove a human pin, at the human\u2019s explicit request.', schema: { type: 'object', required: ['program'], properties: { program: { type: 'string', enum: Object.keys(s.pins) } } } });
+    if (s.coefSel) d.push({ name: 'test_assumption', fn: 't_test_assumption', description: 'Suppress the selected coefficient for preview only and recompute affected indices. Never canonical.', schema: { type: 'object', properties: { coefficient: { type: 'string', enum: [s.coefSel] } } } });
+    return d;
+  }
+
+  // ---------- human actions ----------
+  togglePin = (id) => {
+    const can = this.canonical();
+    this.setState(s => {
+      const p = Object.assign({}, s.pins);
+      if (p[id] != null) delete p[id]; else p[id] = can[id];
+      return { pins: p };
+    });
+    this.bump();
+    this.log('(human)', 'human', (this.state.pins[id] != null ? 'unpinned ' : 'pinned ') + PMAP[id].label + (this.state.pins[id] != null ? '' : ' at $' + fmt(can[id]) + 'M'));
+  };
+  accept = () => {
+    const st = this.state.staged; if (!st || !st.feasible) return;
+    const can = this.canonical(), out = this.outcomes(st.alloc);
+    const moved = PROGRAMS.filter(p => st.alloc[p.id] !== can[p.id]);
+    const relied = COEFS.filter(c => moved.some(m => m.id === c.p));
+    let best = null, worst = null;
+    DISTRICTS.forEach(d => OUTCOMES.forEach(o => {
+      const dv = out[d.id][o.id] - BASE_OUT[d.id][o.id];
+      if (!best || dv > best.v) best = { v: dv, d: d.id, o: o.id };
+      if (!worst || dv < worst.v) worst = { v: dv, d: d.id, o: o.id };
+    }));
+    const receipt = {
+      name: st.name, request: this.state.request || '(set directly in the page)', when: new Date().toLocaleString(),
+      version: this.state.version + 1, moved, relied, best, worst, calls: this.state.calls,
+      pins: Object.keys(this.state.pins).map(id => PMAP[id].label + ' @ $' + fmt(this.state.pins[id]) + 'M'),
+      alloc: Object.assign({}, st.alloc), canBefore: can
+    };
+    this.setState(s => ({
+      accepted: s.accepted.concat([{ name: st.name, alloc: st.alloc, moved: moved.length }]),
+      staged: null, receipt, panel: 'receipt', suppressed: {}, coefSel: null
+    }));
+    this.bump();
+    this.log('(human)', 'human', 'ACCEPTED \u201c' + st.name + '\u201d \u00b7 receipt written \u00b7 suppression masks cleared');
+  };
+  discard = () => { if (!this.state.staged) return; this.t_discard_preview(); this.log('(human)', 'human', 'discarded the staged scenario'); };
+  reset = () => {
+    this.setState({ version: 1, pins: {}, staged: null, accepted: [], suppressed: {}, coefSel: null, programSel: null, districtSel: null, request: null, receipt: null, panel: 'inspector', calls: 0, log: [{ n: 1, tool: 'get_civic_state', kind: 'read', summary: 'demo reset to canonical baseline \u00b7 v1' }] });
+  };
+
+  // ---------- harness ----------
+  runBeat = (i) => {
+    const seq = this.beats()[i]; if (!seq) return;
+    this.setState({ request: seq.text });
+    seq.steps.forEach((fn, k) => setTimeout(fn, (this.props.reducedMotion ? 60 : 420) * k));
+  };
+  beats() {
+    return [
+      {
+        text: 'Reduce housing instability and improve access to jobs without increasing the total budget. Do not cut emergency response.',
+        meta: 'get_civic_state \u2192 get_model_details \u2192 preview_scenario \u2192 focus_tradeoffs',
+        steps: [
+          () => this.t_get_civic_state(),
+          () => this.t_get_model_details({ programs: ['housing', 'transit', 'emergency'] }),
+          () => this.t_preview_scenario({ name: 'Housing and access first', weights: SIG_WEIGHTS, protect: ['emergency'], rationale: 'Weight stability and mobility; hold emergency response.', utterance: 'Reduce housing instability and improve access to jobs without increasing the total budget. Do not cut emergency response.' }),
+          () => this.t_focus_tradeoffs({ programs: ['housing'], districts: ['river_ward'], outcome: 'stability' })
+        ]
+      },
+      {
+        text: 'Keep parks, youth and libraries exactly where they are. I need housing at 28 and transit at 22.',
+        meta: 'get_civic_state \u2192 revise_scenario with firm targets',
+        steps: [
+          () => this.t_get_civic_state(),
+          () => (this.state.staged ? this.t_revise_scenario : this.t_preview_scenario)({ name: 'Firm targets', weights: SIG_WEIGHTS, targets: { housing: { min: 28 }, transit: { min: 22 } }, rationale: 'Human stated firm dollar floors.', utterance: 'Keep parks, youth and libraries exactly where they are. I need housing at 28 and transit at 22.' })
+        ]
+      },
+      {
+        text: 'Drop the hard targets. Just prioritise housing and transit as far as the pins allow.',
+        meta: 'get_civic_state \u2192 revise_scenario, weights only',
+        steps: [
+          () => this.t_get_civic_state(),
+          () => (this.state.staged ? this.t_revise_scenario : this.t_preview_scenario)({ name: 'Within the pins', weights: SIG_WEIGHTS, rationale: 'Targets dropped; weights alone are always feasible.', utterance: 'Drop the hard targets. Just prioritise housing and transit as far as the pins allow.' }),
+          () => this.t_compare_scenarios()
+        ]
+      },
+      {
+        text: 'Which assumption is this plan leaning on hardest?',
+        meta: 'get_model_details \u2192 focus_tradeoffs \u2192 test_assumption becomes available',
+        steps: [
+          () => this.t_get_model_details({ programs: ['housing'] }),
+          () => this.t_focus_tradeoffs({ programs: ['housing'], outcome: 'stability' }),
+          () => this.setState({ coefSel: 'cf_housing_stability', panel: 'inspector' })
+        ]
+      }
+    ];
+  }
+
+  // ---------- render values ----------
+  renderVals() {
+    const s = this.state, st = s.staged, can = this.canonical();
+    const P = this.P(), dark = this.dark();
+    const shown = st && st.feasible ? st.alloc : can;
+    const staged = !!(st && st.feasible);
+    const infeasible = !!(st && !st.feasible);
+    const outNow = this.outcomes(shown), outCan = this.outcomes(can);
+    const trans = this.props.reducedMotion ? 'none' : 'width 500ms ease-out';
+    const transH = this.props.reducedMotion ? 'none' : 'height 500ms ease-out';
+    const px = 1.6, spineH = 160, svgH = 452, spineY = (svgH - spineH) / 2;
+
+    let cum = 0;
+    const flows = PROGRAMS.map((p, i) => {
+      const w = (shown[p.id] / 10) * px;
+      const ys = spineY + cum + w / 2; cum += w;
+      const ye = 10 + i * 54 + 27;
+      const dv = (shown[p.id] - can[p.id]) / 10;
+      return {
+        d: 'M13,' + ys.toFixed(1) + ' C62,' + ys.toFixed(1) + ' 80,' + ye + ' 140,' + ye,
+        w: w.toFixed(1), stroke: dv > 0.05 ? LIGHT.teal : dv < -0.05 ? LIGHT.rust : LIGHT.neut,
+        dash: staged && Math.abs(dv) > 0.05 ? '7 5' : 'none', op: staged ? 0.92 : 0.8
+      };
+    });
+    let gcum = 0;
+    const ghosts = staged ? PROGRAMS.map((p, i) => {
+      const w = (can[p.id] / 10) * px; const ys = spineY + gcum + w / 2; gcum += w;
+      const ye = 10 + i * 54 + 27;
+      return { d: 'M13,' + ys.toFixed(1) + ' C62,' + ys.toFixed(1) + ' 80,' + ye + ' 140,' + ye, w: w.toFixed(1) };
+    }) : [];
+
+    let vcum = 0;
+    const flowsV = PROGRAMS.map((p, i) => {
+      const w = shown[p.id], x0 = vcum; vcum += w;
+      const cx = (i + 0.5) * 125, bw = Math.min(w, 92), bx = cx - bw / 2;
+      const dv = (shown[p.id] - can[p.id]) / 10;
+      const col = dv > 0.05 ? DARK.teal : dv < -0.05 ? DARK.rust : DARK.neut;
+      return {
+        d: 'M' + x0 + ',0 L' + (x0 + w) + ',0 C' + (x0 + w) + ',70 ' + (bx + bw) + ',60 ' + (bx + bw) + ',128 L' + bx + ',128 C' + bx + ',60 ' + x0 + ',70 ' + x0 + ',0 Z',
+        fill: col, stroke: col, op: staged ? (Math.abs(dv) > 0.05 ? 0.5 : 0.32) : 0.55,
+        dash: staged && Math.abs(dv) > 0.05 ? '4 3' : 'none'
+      };
+    });
+
+    const rows = PROGRAMS.map(p => {
+      const pinned = s.pins[p.id] != null;
+      const v = shown[p.id], c = can[p.id], dv = (v - c) / 10;
+      const bind = st && st.feasible ? (st.bindings || []).find(b => b.program === p.id && b.cause !== 'pin') : null;
+      const ibind = infeasible ? (st.bindings || []).find(b => b.program === p.id) : null;
+      const note = pinned ? 'pinned $' + fmt(s.pins[p.id]) + 'M \u00b7 out of schema'
+        : ibind ? 'binding: ' + ibind.cause + ' \u00b7 ' + ibind.detail
+          : bind ? bind.detail
+            : 'range $' + fmt(p.min) + '\u2013' + fmt(p.max) + 'M';
+      const col = dv > 0.05 ? P.teal : dv < -0.05 ? P.rust : P.dim;
+      const sel = s.programSel === p.id;
+      return {
+        id: p.id, label: p.label, note,
+        valueStr: staged || infeasible ? fmt(c) + ' \u2192 ' + fmt(v) : fmt(c),
+        propOnly: fmt(v),
+        deltaStr: Math.abs(dv) > 0.05 ? (dv > 0 ? '\u25b2 ' : '\u25bc ') + sgn(dv) : '\u2013',
+        deltaStyle: { fontFamily: "'IBM Plex Mono', monospace", fontSize: '11.5px', textAlign: 'right', color: col, fontWeight: 500 },
+        colDeltaStyle: { fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', textAlign: 'center', color: col, fontWeight: 500, marginTop: '2px' },
+        pinGlyph: pinned ? '\u25c6' : '\u25c7',
+        pinStyle: { width: '26px', height: '26px', border: '1px solid ' + (pinned ? P.ink : (dark ? '#3c423a' : '#d5cfc0')), background: pinned ? P.ink : P.panel, color: pinned ? P.inkText : P.dim, cursor: 'pointer', fontSize: '11px', lineHeight: 1, padding: 0 },
+        labelStyle: { cursor: 'pointer', paddingRight: '6px', borderLeft: '2px solid ' + (sel ? P.ink : 'transparent'), paddingLeft: '6px' },
+        colStyle: { borderLeft: '1px solid ' + P.line2, background: sel ? (dark ? '#1a1d19' : P.alt) : 'transparent', padding: '10px 0 4px' },
+        colLabelStyle: { cursor: 'pointer', fontSize: '10.5px', fontWeight: 500, lineHeight: 1.2, textAlign: 'center', padding: '8px 6px 3px', color: P.text, borderTop: '2px solid ' + (sel ? P.ink : 'transparent') },
+        baseBar: { position: 'absolute', left: 0, top: 0, bottom: 0, width: (c / 300 * 100) + '%', background: P.barNeut, transition: trans },
+        propBar: staged ? { position: 'absolute', left: 0, top: 0, bottom: 0, width: (v / 300 * 100) + '%', background: dv > 0.05 ? P.tealFill : dv < -0.05 ? P.rustFill : 'transparent', borderRight: '2px dashed ' + (dv > 0.05 ? P.teal : dv < -0.05 ? P.rust : 'transparent'), transition: trans } : { display: 'none' },
+        colGhost: { position: 'absolute', left: '14%', right: '14%', bottom: 0, height: (c / 300 * 128) + 'px', border: '1px dashed #6b7268', background: 'transparent' },
+        colBar: { position: 'absolute', left: '22%', right: '22%', bottom: 0, height: (v / 300 * 128) + 'px', background: dv > 0.05 ? DARK.teal : dv < -0.05 ? DARK.rust : '#8b9287', transition: transH },
+        togglePin: () => this.togglePin(p.id),
+        select: () => this.setState({ programSel: p.id, districtSel: null, coefSel: null, panel: 'inspector' })
+      };
+    });
+
+    const tiles = DISTRICTS.map(d => {
+      const v = outNow[d.id][s.outcomeSel], b = BASE_OUT[d.id][s.outcomeSel], dv = v - b;
+      let worst = 0, worstO = null;
+      OUTCOMES.forEach(o => { const x = outNow[d.id][o.id] - BASE_OUT[d.id][o.id]; if (x < worst) { worst = x; worstO = o.id; } });
+      const sel = s.districtSel === d.id;
+      return {
+        label: d.label, valueStr: v.toFixed(1),
+        deltaStr: Math.abs(dv) > 0.049 ? (dv > 0 ? '\u25b2' : '\u25bc') + ' ' + sgn(dv) : '\u2013',
+        deltaStyle: { fontFamily: "'IBM Plex Mono', monospace", fontSize: '11px', fontWeight: 500, color: dv > 0.049 ? P.teal : dv < -0.049 ? P.rust : P.dim },
+        bar: { position: 'absolute', left: 0, top: 0, bottom: 0, width: v + '%', background: dark ? '#8b9287' : '#6f6857', transition: trans },
+        worstNote: worstO ? 'worst index ' + sgn(worst) + ' ' + worstO + (worst < -1.5 ? ' \u26a0' : '') : 'no decline',
+        style: { textAlign: 'left', padding: '9px 10px 10px', border: '1px solid ' + (sel ? P.ink : P.line), background: sel ? P.alt : P.panel, cursor: 'pointer' },
+        select: () => this.setState({ districtSel: d.id, programSel: null, panel: 'inspector' })
+      };
+    });
+
+    const chip = (on) => ({ fontFamily: "'IBM Plex Mono', monospace", fontSize: '9.5px', letterSpacing: '0.05em', textTransform: 'uppercase', padding: '5px 8px', cursor: 'pointer', border: '1px solid ' + (on ? P.ink : P.line), background: on ? P.ink : P.panel, color: on ? P.inkText : P.dim });
+    const outcomeTabs = OUTCOMES.map(o => ({ label: o.label, style: chip(s.outcomeSel === o.id), select: () => this.setState({ outcomeSel: o.id }) }));
+    const dirBtns = [
+      { label: 'A \u00b7 Instrument', style: chip(!dark), select: () => this.setState({ dir: 'instrument' }) },
+      { label: 'B \u00b7 Situation room', style: chip(dark), select: () => this.setState({ dir: 'room' }) }
+    ];
+
+    const bindings = ((st && st.bindings) || []).map(b => ({
+      label: PMAP[b.program].label, detail: b.detail,
+      style: { display: 'flex', justifyContent: 'space-between', gap: '10px', alignItems: 'baseline', fontSize: '11.5px', padding: '5px 8px', border: '1px solid ' + (b.cause === 'pin' ? P.ink : b.cause === 'target' ? P.rust : P.line), background: infeasible ? P.rustBg : P.alt, color: P.text }
+    }));
+
+    const movers = PROGRAMS.map(p => ({ label: PMAP[p.id].label, dv: (shown[p.id] - can[p.id]) / 10 })).filter(m => Math.abs(m.dv) > 0.05);
+    const districtMoves = [];
+    DISTRICTS.forEach(d => OUTCOMES.forEach(o => {
+      const dv = outNow[d.id][o.id] - outCan[d.id][o.id];
+      if (Math.abs(dv) > 0.05) districtMoves.push({ label: DLABEL[d.id] + ' \u00b7 ' + o.id, dv });
+    }));
+    const gains = movers.filter(m => m.dv > 0).sort((a, b) => b.dv - a.dv).slice(0, 2).map(m => ({ label: m.label, value: sgn(m.dv) + 'M' }))
+      .concat(districtMoves.filter(m => m.dv > 0).sort((a, b) => b.dv - a.dv).slice(0, 2).map(m => ({ label: m.label, value: sgn(m.dv) + ' pts' })));
+    const losses = movers.filter(m => m.dv < 0).sort((a, b) => a.dv - b.dv).slice(0, 2).map(m => ({ label: m.label, value: sgn(m.dv) + 'M' }))
+      .concat(districtMoves.filter(m => m.dv < 0).sort((a, b) => a.dv - b.dv).slice(0, 2).map(m => ({ label: m.label, value: sgn(m.dv) + ' pts' })));
+
+    const defs = this.toolDefs();
+    const toolList = defs.map(d => ({
+      name: d.name, hint: d.readOnly ? 'read' : d.name === 'focus_tradeoffs' || d.name === 'test_assumption' ? 'view' : 'stage',
+      dot: { display: 'inline-block', width: '6px', height: '6px', background: d.readOnly ? P.dim : P.teal }
+    }));
+
+    const inspector = this.inspectorVals();
+    const r = s.receipt;
+    const receipt = r ? {
+      title: 'Accepted \u2014 ' + r.name, stamp: 'state v' + r.version + ' \u00b7 model ' + MODEL_V + ' \u00b7 ' + r.when + ' \u00b7 ' + r.calls + ' tool calls',
+      request: '\u201c' + r.request + '\u201d',
+      lines: [
+        { k: 'Programs moved', v: r.moved.map(m => m.label + ' ' + sgn((r.alloc[m.id] - r.canBefore[m.id]) / 10)).join(', ') || 'none' },
+        { k: 'Total', v: '$100.0M \u00b7 exact, asserted after rounding' },
+        { k: 'Human pins at accept', v: r.pins.join(', ') || 'none' },
+        { k: 'Largest index gain', v: DLABEL[r.best.d] + ' ' + r.best.o + ' ' + sgn(r.best.v) + ' pts' },
+        { k: 'Largest index loss', v: DLABEL[r.worst.d] + ' ' + r.worst.o + ' ' + sgn(r.worst.v) + ' pts' },
+        { k: 'Accepted by', v: 'human, in-page control' }
+      ],
+      coefs: r.relied.map(c => ({
+        label: c.id, meta: c.v + ' \u00b7 ' + c.conf + ' \u00b7 ' + c.prov,
+        style: { display: 'flex', justifyContent: 'space-between', gap: '10px', alignItems: 'baseline', padding: '4px 7px', border: '1px solid ' + (c.conf === 'low' ? P.rust : P.line), background: c.conf === 'low' ? P.rustBg : P.alt, marginBottom: '3px', color: P.text }
+      })),
+      weakest: 'This decision rests on ' + r.relied.filter(c => c.conf === 'low').length + ' low-confidence assumed coefficient(s). The largest of them, cf_housing_stability at 1.6, carries the headline stability gain.'
+    } : null;
+
+    const btn = (on, solid) => ({
+      fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', letterSpacing: '0.06em', textTransform: 'uppercase',
+      padding: '9px 12px', cursor: on ? 'pointer' : 'not-allowed',
+      border: '1px solid ' + (on ? (solid ? P.ink : P.line) : P.line2),
+      background: on && solid ? P.ink : P.panel, color: on ? (solid ? P.inkText : P.text) : P.off
+    });
+
+    const beats = this.beats();
+    return {
+      modelVersion: MODEL_V, version: s.version, narrow: s.narrow, vw: s.vw,
+      showInstrument: !dark, showRoom: dark, dirBtns,
+      mcpLabel: s.mcp === 'live' ? 'WebMCP live \u00b7 ' + defs.length + ' tools' : 'WebMCP unavailable \u00b7 page fully usable',
+      spine: { y: spineY, h: spineH }, flows, ghosts, flowsV, rows, tiles, outcomeTabs,
+      statusChip: infeasible ? 'No feasible plan' : staged ? 'Staged \u00b7 awaiting human' : s.accepted.length ? 'Accepted is canonical' : 'Baseline',
+      statusChipStyle: { fontFamily: "'IBM Plex Mono', monospace", fontSize: '9.5px', letterSpacing: '0.06em', textTransform: 'uppercase', padding: '4px 8px', border: '1px solid ' + (infeasible ? P.rust : staged ? P.teal : P.line), color: infeasible ? P.rust : staged ? P.teal : P.dim, background: infeasible ? P.rustBg : staged ? P.tealBg : 'transparent' },
+      requestText: s.request ? '\u201c' + s.request + '\u201d' + (infeasible ? ' \u2014 the engine returned no plan. Requested floors total $' + fmt(st.required) + 'M against a $100.0M budget.' : '') : 'No active request. State a goal through a WebMCP agent, or run one of the harness utterances.',
+      hasStaged: staged, hasBindings: bindings.length > 0, bindings,
+      bindingsHeading: infeasible ? 'Binding constraints \u00b7 ' + bindings.length + ' conflicts' : 'What is holding this plan',
+      gains, losses,
+      hasAccepted: s.accepted.length > 0,
+      acceptedList: s.accepted.map((a, i) => ({ name: (i + 1) + '. ' + a.name, summary: a.moved + ' programs moved \u00b7 $100.0M' })),
+      onAccept: this.accept, onDiscard: this.discard, onReset: this.reset,
+      acceptStyle: btn(staged, true), discardStyle: btn(!!st, false),
+      prompts: beats.map((b, i) => ({
+        text: '\u201c' + b.text + '\u201d', meta: b.meta, run: () => this.runBeat(i),
+        style: { textAlign: 'left', padding: '10px 11px', border: '1px solid ' + (dark ? '#2f342e' : '#4a4636'), background: dark ? '#101210' : '#35322766', cursor: 'pointer', color: dark ? DARK.text : '#f0ece0' }
+      })),
+      log: s.log.map(e => ({
+        n: e.n, tool: e.tool, kind: e.kind, summary: e.summary,
+        kindStyle: { fontFamily: "'IBM Plex Mono', monospace", fontSize: '8.5px', letterSpacing: '0.06em', textTransform: 'uppercase', textAlign: 'center', padding: '2px 0', border: '1px solid ' + (e.kind === 'human' ? P.ink : e.kind === 'stage' ? P.teal : P.line), color: e.kind === 'human' ? P.text : e.kind === 'stage' ? P.teal : P.dim }
+      })),
+      toolCount: defs.length, callCount: s.calls, toolList,
+      schemaEnum: '[' + this.unpinnedIds().map(id => '"' + id + '"').join(', ') + ']',
+      schemaNote: Object.keys(s.pins).length ? Object.keys(s.pins).length + ' pinned program(s) removed from the schema \u2014 the agent cannot express touching them.' : 'All 8 unpinned. Pin a program to watch the enum narrow.',
+      panelTabs: [
+        { label: 'Model inspector', style: chip(s.panel === 'inspector'), select: () => this.setState({ panel: 'inspector' }) },
+        { label: 'Decision receipt', style: chip(s.panel === 'receipt'), select: () => this.setState({ panel: 'receipt' }) }
+      ],
+      showInspector: s.panel === 'inspector', showReceipt: s.panel === 'receipt',
+      hasReceipt: s.panel === 'receipt' && !!receipt, noReceipt: s.panel === 'receipt' && !receipt,
+      receipt: receipt || { title: '', stamp: '', request: '', lines: [], coefs: [], weakest: '' },
+      inspector,
+      suppressionActive: Object.keys(s.suppressed).length > 0,
+      suppressionNote: Object.keys(s.suppressed).join(', ') + ' suppressed'
+    };
+  }
+
+  inspectorVals() {
+    const s = this.state, st = s.staged, can = this.canonical(), P = this.P();
+    const shown = st && st.feasible ? st.alloc : can;
+    const rowStyle = (sel) => ({ padding: '6px 8px', border: '1px solid ' + (sel ? P.ink : P.line2), background: sel ? P.alt : P.panel, cursor: 'pointer', color: P.text });
+    const sup = !!s.suppressed[s.coefSel];
+    const coefBlock = (pid) => COEFS.filter(c => c.p === pid).map(c => ({
+      label: OLABEL[c.o] + (s.suppressed[c.id] ? ' \u00b7 suppressed' : ''),
+      value: (s.suppressed[c.id] ? '0.0' : c.v.toFixed(1)) + ' pts / $M',
+      meta: c.id + ' \u00b7 ' + c.conf + ' confidence \u00b7 ' + c.prov,
+      style: Object.assign(rowStyle(s.coefSel === c.id), s.suppressed[c.id] ? { textDecoration: 'line-through', opacity: .75 } : {}),
+      select: () => this.setState({ coefSel: c.id })
+    }));
+
+    if (s.programSel) {
+      const p = PMAP[s.programSel], dv = (shown[p.id] - can[p.id]) / 10;
+      const coefRows = coefBlock(p.id);
+      const distRows = DISTRICTS.slice().sort((a, b) => (INC[p.id][b.id] || 0) - (INC[p.id][a.id] || 0)).map(d => ({
+        label: d.label, value: Math.round((INC[p.id][d.id] || 0) * 100) + '% of spend',
+        meta: 'contribution to ' + s.outcomeSel + ': ' + sgn(dv * (INC[p.id][d.id] || 0) * this.coefVal(p.id, s.outcomeSel)) + ' pts',
+        style: rowStyle(false), select: () => this.setState({ districtSel: d.id })
+      }));
+      return {
+        title: p.label, sub: '$' + fmt(shown[p.id]) + 'M \u00b7 statutory $' + fmt(p.min) + '\u2013' + fmt(p.max) + 'M \u00b7 cap band $' + fmt(Math.round(p.b * (1 - this.cap()))) + '\u2013' + fmt(Math.round(p.b * (1 + this.cap()))) + 'M',
+        rows: coefRows.concat(distRows), hasCoefSel: !!s.coefSel,
+        coefNote: s.coefSel ? (sup ? 'Suppressed for preview. Every district index recomputes with this term removed; the allocation itself is untouched.' : 'Selected. Suppressing it removes this term from every district index so you can see what the case depends on.') : '',
+        toggleSuppress: () => this.t_test_assumption({ coefficient: s.coefSel }),
+        suppressLabel: sup ? 'Restore assumption' : 'Suppress for preview',
+        suppressStyle: { marginTop: '8px', fontFamily: "'IBM Plex Mono', monospace", fontSize: '10px', letterSpacing: '0.06em', textTransform: 'uppercase', padding: '7px 10px', cursor: 'pointer', border: '1px solid ' + (sup ? P.rust : P.ink), background: sup ? P.rustBg : P.panel, color: sup ? P.rust : P.text },
+        footer: 'Every number above is arithmetic over disclosed coefficients. Incidence shares sum to 1.0, so the citywide effect per $1M equals the coefficient.'
+      };
+    }
+    if (s.districtSel) {
+      const d = s.districtSel, o = s.outcomeSel;
+      const rows = PROGRAMS.map(p => {
+        const contrib = ((shown[p.id] - PMAP[p.id].b) / 10) * (INC[p.id][d] || 0) * this.coefVal(p.id, o);
+        return { label: p.label, value: sgn(contrib) + ' pts', meta: 'incidence ' + Math.round((INC[p.id][d] || 0) * 100) + '% \u00b7 coefficient ' + this.coefVal(p.id, o).toFixed(1), style: rowStyle(false), select: () => this.setState({ programSel: p.id, districtSel: null }) };
+      }).sort((a, b) => Math.abs(parseFloat(b.value)) - Math.abs(parseFloat(a.value)));
+      const v = this.outcomes(shown)[d][o];
+      return {
+        title: DLABEL[d], sub: OLABEL[o] + ' \u00b7 baseline ' + BASE_OUT[d][o].toFixed(1) + ' \u2192 ' + v.toFixed(1),
+        rows, hasCoefSel: false, coefNote: '', toggleSuppress: () => { }, suppressLabel: '', suppressStyle: {},
+        footer: 'district_outcome = clamp(0, 100, baseline + \u03a3 (\u0394alloc \u00d7 incidence \u00d7 coefficient)). Terms above are the summands.'
+      };
+    }
+    return {
+      title: 'Harbor City model ' + MODEL_V,
+      sub: '$100.0M fixed \u00b7 0.1M resolution \u00b7 ' + Math.round(this.cap() * 100) + '% default change cap',
+      rows: [
+        { label: 'Total allocation', value: 'exactly 100.0', meta: 'asserted after largest-remainder rounding, never before', style: rowStyle(false), select: () => { } },
+        { label: 'Emergency Response floor', value: '\u2265 $18.0M', meta: 'statutory \u00b7 baseline 20.0, so it can move 2.0 at most', style: rowStyle(false), select: () => this.setState({ programSel: 'emergency' }) },
+        { label: 'Libraries floor', value: '\u2265 $5.0M', meta: 'statutory', style: rowStyle(false), select: () => this.setState({ programSel: 'libraries' }) },
+        { label: 'Change cap', value: '\u00b1' + Math.round(this.cap() * 100) + '% of baseline', meta: 'product decision, not a modelling claim \u2014 keeps the solve off corner solutions', style: rowStyle(false), select: () => { } },
+        { label: 'Human pins', value: 'immutable to every tool', meta: 'pinned programs are removed from the preview_scenario schema', style: rowStyle(false), select: () => { } },
+        { label: 'District decline rule', value: 'warning, not constraint', meta: 'a 3,000-scenario sweep found the 5-point composite rule binds in 0.0% of cases', style: rowStyle(false), select: () => { } }
+      ],
+      hasCoefSel: false, coefNote: '', toggleSuppress: () => { }, suppressLabel: '', suppressStyle: {},
+      footer: 'Select a program column or a district tile to read its arithmetic. No agent is required to inspect the model.'
+    };
+  }
+}
+
+</script>
+</body>
+</html>
