@@ -123,9 +123,49 @@ The browser gate for the WebMCP round trip still requires a secure deployed orig
 Gate passed: five timing tests plus browser verification of the wiring. Watching the motion on screen remains a
 human check; the automation pane keeps the document hidden, which pauses `requestAnimationFrame`.
 
-### 6. Submission package
+### 6. Submission package — local deliverables complete; deploy, recording, and publication pending approval
 
 - Deploy the approved candidate.
 - Capture baseline, proposal, pins, infeasibility, recovery, and receipt screenshots.
 - Record the 150-second walkthrough.
 - Publish the repository and submission materials only after explicit approval.
+
+Complete: `npm run capture` builds the app, serves it, drives a real Chrome through the whole signature flow,
+and writes the six required states to `audit/submission/` at 1280x720 CSS px, 2x scale. It asserts on the page's
+own text at every step, so a drifted UI fails the run rather than producing screenshots of the wrong thing, and
+it fails on any console error or failed request. `SUBMISSION.md` holds the Devpost text, the WebMCP testing
+instructions, and the 150-second shot list. `vercel.json` is configured but nothing has been deployed.
+
+Fixed while capturing: the page had no icon link, so every browser requested `/favicon.ico` and got a 404. That
+is a console error on the deployed origin, which PRD section 20 forbids. Now an inline data-URI icon that cannot
+404.
+
+#### PRD section 20 acceptance status
+
+Settled by test or measurement:
+
+- Signature prompt produces a feasible staged scenario, every run. Engine is pure, so determinism is asserted too.
+- Pinning Climate and Parks produces a visibly different revision, and the money visibly comes from elsewhere.
+- Every generated scenario satisfies all numerical invariants (property suite).
+- No agent tool can accept a scenario.
+- The activity log distinguishes read, staged, discarded, and human-accepted, and only the human action creates
+  a receipt or changes the canonical allocation.
+- Solver returns in **0.004ms median, 0.009ms worst** over 50 runs, against a 500ms budget.
+- Visual state updates **14ms** after the click, against a 200ms budget.
+- No uncaught console errors or failed requests during the demo flow.
+- Repository contains source, instructions, and a visible MIT license.
+
+Still open, and not closable locally:
+
+- ChatGPT discovers the expected tools from a fresh in-app browser session. **Needs a deployed HTTPS origin.**
+- A fresh user identifies the largest three baseline programs in under 30 seconds. **Needs a human observer.**
+- A user identifies a gain and a loss without agent prose. **Needs a human observer.**
+- The recorded walkthrough fits 150 seconds. Script is written to 150s; **needs the recording.**
+
+#### Contradiction to resolve
+
+`design-qa.md` states that a real in-app WebMCP call staged a proposal and swapped the tool surface, and its
+checklist ticks "verify dynamic WebMCP registration in the in-app browser". Work package 3 and this package both
+record the in-app round trip as pending a deployed origin, and the app reports `WebMCP unavailable` in local
+testing. Both cannot be true. Ryan should say which record is right before the WebMCP claim goes into the
+submission text.

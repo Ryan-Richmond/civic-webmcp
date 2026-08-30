@@ -61,3 +61,23 @@ describe('solveScenario', () => {
     expect(() => solveScenario({ weights: SIGNATURE_WEIGHTS, pins: { climate: 80.5 } })).toThrow(/integer/)
   })
 })
+
+describe('performance', () => {
+  it('solves the Harbor City model well inside the 500ms acceptance budget', () => {
+    // PRD section 20: the solver must return in under 500ms on the demo machine.
+    const request = { weights: SIGNATURE_WEIGHTS, pins: { climate: 80 }, targets: { housing: { minimum: 200 } } }
+    solveScenario(request)
+
+    const timings = Array.from({ length: 50 }, () => {
+      const start = performance.now()
+      solveScenario(request)
+      return performance.now() - start
+    }).sort((a, b) => a - b)
+
+    const median = timings[Math.floor(timings.length / 2)]!
+    const worst = timings.at(-1)!
+    expect(median).toBeLessThan(500)
+    expect(worst).toBeLessThan(500)
+    console.log(`    solver: median ${median.toFixed(3)}ms, worst ${worst.toFixed(3)}ms over 50 runs`)
+  })
+})
