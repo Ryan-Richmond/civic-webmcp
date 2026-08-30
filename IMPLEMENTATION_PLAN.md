@@ -25,6 +25,21 @@ Date: 2026-08-29
 - The public schema field is `protectedPrograms`.
 - Direction A, Instrument, is the implementation target after the final visual-selection gate. Direction B contributes canonical-outline and activity-rail ideas only.
 
+## Defects found and fixed during verification
+
+- **Pins did not bind an already-staged preview.** A preview solved before a human pin could be accepted, producing
+  a canonical allocation and a receipt that contradicted the pin. `stagedPinConflicts` now blocks acceptance in the
+  reducer and in the UI, the rail and the screen-reader summary explain why, and a revision that respects the pin
+  clears it. Covered by tests in `src/state/summaries.test.ts`.
+- **The decision receipt was not auditable.** It named the scenario but not what moved, which pins held, or which
+  coefficients it relied on, and the pre-acceptance allocation was not retained, so it could not be reconstructed.
+  `AcceptedScenario` now stores `from`, `pins`, and `stateVersion`; persisted receipts in the older shape are rejected.
+- **The activity rail counted human decisions as agent tool calls** and opened with a hardcoded `get_civic_state`
+  entry that no agent had made. Counts are now split, and the empty state is labeled as page state.
+- **The rail's tool list was a second implementation of the registration rules.** It now reads `civicToolNames`,
+  the same builder the runtime registers, with a test pinning them together.
+- **`focus_tradeoffs` moved nothing.** Agent focus now drives the selected program, district, and outcome.
+
 ## Open review decisions
 
 - **Resolved:** Implement Direction A, Instrument, and amend the product record to accept the two explored directions.
@@ -69,14 +84,44 @@ Local gate passed: contract tests prove the exact tool set and schemas for basel
 
 Gate: the complete manual signature flow works without WebMCP.
 
-### 5. Accessibility and browser verification
+### 5. Accessibility and browser verification — local gate passed; in-app WebMCP round trip pending deploy
 
-- Provide semantic controls, keyboard navigation, visible focus, screen-reader summaries, and 44px interaction targets.
+- Provide semantic controls, keyboard navigation, visible focus, screen-reader summaries, and generous interaction targets.
 - Honor `prefers-reduced-motion` and show a textual change list.
 - Verify 1280x720 and 1440x900.
 - Run the flow in ChatGPT's in-app browser and sponsor-aligned Chrome testing.
 
-Gate: the complete WebMCP flow succeeds twice from fresh sessions without console errors.
+Local gate passed on 2026-08-29. Measured in the browser at the required viewports: every control is a native
+button with an accessible name, no control is smaller than 24x24 CSS px, no focusable element sits inside an
+`aria-hidden` region, the page overflows neither axis at 1280x720 or 1440x900, and the workspace stacks with an
+explicit notice below 1050px. Evidence and the two deliberate deviations are recorded in `design-qa.md`.
+
+Target size: the plan originally said 44px. **Recommendation adopted: conform to WCAG 2.2 AA Target Size
+(Minimum), 24x24, and stop chasing 44.** 44px is WCAG 2.1 AAA / touch-platform guidance sized for a fingertip;
+Civic is a desktop pointer-and-keyboard workspace whose stated demo target is the desktop in-app browser, so AA
+plus generous spacing is the right bar. Chasing 44 uniformly would cost the single-screen composition that makes
+the product legible, which is a bad trade for a criterion that does not apply to the input device.
+
+Every control now meets 24x24. Program rows were raised from 38px to 40px, the most the 1280x720 layout allows
+(eight rows at 40px exactly fill the 321px program list), so pin buttons and program labels are 39-40px tall.
+District tiles are 56px. If a touch target is ever needed, the existing stacked layout below 1050px already has
+the vertical room for 44px+, and that is where it belongs.
+
+The browser gate for the WebMCP round trip still requires a secure deployed origin and ChatGPT in-app testing.
+
+### 5b. Motion — complete locally
+
+- Flow transitions implemented to the `SPEC.md` section 4 parameters: 500ms ease-out, 40ms stagger in descending
+  magnitude, reduced motion swaps immediately and falls back to the change list.
+- Driven by easing the allocation rather than the DOM, because Recharts remounts its Sankey paths on every data
+  change and CSS transitions cannot survive a remount. The flow, the bars, and the district tiles share one clock,
+  satisfying PRD section 11.4.
+- Numbers, deltas, and screen-reader summaries read the settled allocation, never an in-flight frame.
+- The transition is skipped while the page is hidden, so a scenario staged by an agent against a backgrounded
+  in-app browser cannot leave a stale flow diagram.
+
+Gate passed: five timing tests plus browser verification of the wiring. Watching the motion on screen remains a
+human check; the automation pane keeps the document hidden, which pauses `requestAnimationFrame`.
 
 ### 6. Submission package
 

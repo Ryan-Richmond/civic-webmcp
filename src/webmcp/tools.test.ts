@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from 'vitest'
 import { SIGNATURE_WEIGHTS } from '../model/fixtures'
 import { civicReducer, createInitialState } from '../state/civicState'
 import type { CivicAction, CivicState } from '../state/civicState'
-import { buildCivicTools, registerCivicTools } from './tools'
+import { buildCivicTools, civicToolNames, registerCivicTools } from './tools'
 
 function harness(seed = createInitialState()) {
   let state = seed
@@ -23,6 +23,14 @@ describe('Civic WebMCP tools', () => {
     expect(buildCivicTools(baseline.state, baseline.environment).map(({ name }) => name)).toEqual([
       'get_civic_state', 'get_model_details', 'focus_tradeoffs', 'revise_scenario', 'compare_scenarios', 'discard_preview',
     ])
+  })
+
+  it('exposes the same tool names the activity rail displays', () => {
+    const h = harness()
+    expect(civicToolNames(h.state)).toEqual(buildCivicTools(h.state, h.environment).map(({ name }) => name))
+    h.environment.dispatch({ type: 'pin', programId: 'climate', value: 80, meta: { actor: 'human', action: 'pin', summary: 'pinned climate' } })
+    expect(civicToolNames(h.state)).toEqual(buildCivicTools(h.state, h.environment).map(({ name }) => name))
+    expect(civicToolNames(h.state)).toContain('unpin_program')
   })
 
   it('narrows protectedPrograms to currently unpinned programs', () => {

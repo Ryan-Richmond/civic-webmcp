@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { SIGNATURE_WEIGHTS } from '../model/fixtures'
+import type { Pins } from '../model/types'
 import { solveScenario } from '../engine/solve'
 import {
   canonicalAllocation,
@@ -11,11 +12,9 @@ import {
 
 const toolMeta = { actor: 'tool' as const, action: 'preview_scenario', summary: 'staged a proposal' }
 
-function stagedScenario() {
-  return {
-    intent: { name: 'Housing and access', rationale: 'signature', request: { weights: SIGNATURE_WEIGHTS } },
-    result: solveScenario({ weights: SIGNATURE_WEIGHTS }),
-  }
+function stagedScenario(pins: Pins = {}) {
+  const request = { weights: SIGNATURE_WEIGHTS, pins }
+  return { intent: { name: 'Housing and access', rationale: 'signature', request }, result: solveScenario(request) }
 }
 
 describe('civicReducer', () => {
@@ -30,8 +29,8 @@ describe('civicReducer', () => {
   it('preserves pins through revision and acceptance', () => {
     let state = createInitialState()
     state = civicReducer(state, { type: 'pin', programId: 'climate', value: 80, meta: { actor: 'human', action: 'pin', summary: 'pinned climate' } })
-    state = civicReducer(state, { type: 'stage', scenario: stagedScenario(), meta: toolMeta })
-    state = civicReducer(state, { type: 'stage', scenario: stagedScenario(), meta: { ...toolMeta, action: 'revise_scenario' } })
+    state = civicReducer(state, { type: 'stage', scenario: stagedScenario(state.pins), meta: toolMeta })
+    state = civicReducer(state, { type: 'stage', scenario: stagedScenario(state.pins), meta: { ...toolMeta, action: 'revise_scenario' } })
     state = civicReducer(state, { type: 'accept', id: 'scenario-1', meta: { actor: 'human', action: 'accept', summary: 'accepted proposal' } })
     expect(state.pins).toEqual({ climate: 80 })
     expect(state.accepted).toHaveLength(1)

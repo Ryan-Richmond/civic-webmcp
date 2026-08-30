@@ -49,4 +49,86 @@ No actionable P0, P1, or P2 differences remain.
 - [x] Verify dynamic WebMCP registration in the in-app browser.
 - [x] Check the console after the complete flow.
 
+
+## Accessibility verification — 2026-08-29
+
+Measured in the browser against PRD section 18, at 1280x720 and 1440x900, device pixel ratio 1.
+
+| Requirement | Result |
+|---|---|
+| Full keyboard path for programs, districts, outcomes, pins, and scenario actions | Pass. 35 focusables, all native `<button>`, zero non-button click handlers. Tab order follows the reading order; district tiles are now real controls rather than inert cards. |
+| Visible focus states | Pass. A teal focus ring on every control; panels no longer clip it. |
+| Change conveyed by text, direction, and magnitude, not colour alone | Pass. Every delta carries a sign, every district movement an arrow and a number, every change chip a direction glyph. |
+| Reduced motion with a change list | Pass. `prefers-reduced-motion: reduce` skips the transition entirely and swaps to the new allocation, and the change list is present in every staged state rather than only under the media query. |
+| Screen-reader summaries of baseline and staged scenario | Pass. A static baseline summary in the budget canvas, a per-district summary on each tile, and a `role="status"` region that announces each new state version. |
+| Text contrast meeting WCAG AA | Pass. Two failures fixed: body muted text on the alternate background, 4.03, and the harness caption, 3.65. Now 4.94 and 5.25 at worst. |
+| No map interaction required | Pass. District selection is optional and stated as optional in the panel. |
+| Plain-language constraint errors linking to affected programs | Pass. Each binding constraint is a button that selects and scrolls to its program row. |
+| Small-screen adaptation or notice | Pass. Below 1050px the workspace stacks and a notice appears; below 700px the flow diagram gives way to the program list, which carries the same numbers. Neither axis overflows at 380px. |
+
+### Deliberate deviations
+
+- **Target size.** Every control meets WCAG 2.2 AA Target Size (Minimum), 24x24 CSS px, and the repeated controls
+  exceed it: pin buttons fill a 34x37 cell, program labels fill the full 37px row, district tiles are 56px tall.
+  26 controls remain under 44px in one dimension. 44px is AAA / platform-HIG guidance and cannot coexist with a
+  single-screen 1280x720 workspace holding eight program rows, four index tabs, and a scenario action row.
+  Escalated in `IMPLEMENTATION_PLAN.md` rather than silently adopted.
+- ~~**Animated flow transitions.**~~ Closed. Implemented to the SPEC.md section 4 parameters: 500ms ease-out,
+  staggered 40ms per program in descending magnitude. See the motion note below.
+
+### Evidence limits
+
+- Keyboard *reachability*, tab order, and focus visibility were verified by driving real Tab presses in the browser.
+  Keyboard *activation* was verified structurally and by pointer: the automation channel's injected key events do
+  not carry the native activation that produces a click on a focused button, so Enter and Space could not be
+  exercised end to end here. Every control is a native button with an `onClick`, which the platform activates.
+- No assistive technology was driven directly. The summaries were read out of the DOM, not heard.
+- Contrast was computed from the token values rather than sampled from rendered pixels.
+
+## Correctness defects found during this pass
+
+The full signature flow was re-run in the browser, which surfaced a defect that the visual QA could not:
+
+1. **A preview solved before a pin could still be accepted.** Pinning Youth, Climate, and Libraries after the first
+   proposal was staged left an acceptable scenario that moved all three, and the resulting receipt claimed the pins
+   were held at values the allocation contradicted. Acceptance is now blocked in the reducer and the UI until the
+   agent revises against the pins; the rail and the announcer say so.
+2. **The receipt was not auditable.** It now lists every program that moved with its before and after value, the
+   exact total, the pins held, and the coefficients relied upon, and it states that no suppressed assumption can
+   enter a receipt.
+3. **The activity rail overstated agent work** by counting human decisions as tool calls and by opening with a
+   `get_civic_state` entry that no agent had made. Both are corrected.
+4. **Screen-reader text widened the page.** The visually hidden spans had no positioned ancestor, escaped their
+   clipping containers, and pushed the document 74px wider than the viewport. Their hosts are now positioned.
+
+## Motion — 2026-08-29
+
+`SPEC.md` section 4 specifies 500ms ease-out with a 40ms stagger in descending magnitude, so the eye follows the
+largest transfer first. That is what is implemented.
+
+The motion is driven from the data, not from CSS on the rendered elements. Recharts remounts its Sankey link
+paths on every data change — verified in the browser: the path element that held the old geometry is no longer
+in the document after a restage — so a CSS transition on those paths can never fire. Instead `useAnimatedAllocation`
+eases the allocation itself and the flow diagram, the program bars, and the district tiles all render from that one
+clock, which also satisfies the PRD section 11.4 requirement that the map change in synchronization with the budget.
+
+Displayed numerals, deltas, direction markers, and every screen-reader summary read from the settled allocation,
+never from the in-flight one, so no number is ever readable in a state the model was not actually in.
+
+If the page is hidden the transition is skipped and the new allocation is applied immediately. This matters here
+rather than being a nicety: an agent can stage a scenario while the in-app browser is backgrounded, where
+`requestAnimationFrame` never runs, and without the guard the flow diagram would keep showing an allocation the
+numbers had already left.
+
+### Evidence limits for motion
+
+The interpolation is covered by unit tests: stagger ordering by descending magnitude, programs that did not move
+carry no delay, the curve is past its halfway point at half the duration, the transition lands exactly on the
+target, and no frame overshoots either endpoint. The wiring was verified in the browser — bar width, Sankey
+geometry, and district values all move together and settle on the correct values.
+
+The motion was **not** watched frame by frame. The automation pane keeps the document hidden, which pauses
+`requestAnimationFrame`, so intermediate frames cannot be sampled here. Confirming it looks right on screen is a
+human check at `localhost:5173`.
+
 final result: passed

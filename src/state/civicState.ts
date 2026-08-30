@@ -1,4 +1,5 @@
 import { BASELINE_ALLOCATION, MODEL_VERSION } from '../model/fixtures'
+import { PROGRAM_IDS } from '../model/types'
 import type { SolveRequest, SolveResult } from '../engine/solve'
 import type { Allocation, CoefficientId, DistrictId, OutcomeId, Pins, ProgramId } from '../model/types'
 
@@ -17,7 +18,11 @@ export interface AcceptedScenario {
   id: string
   name: string
   rationale: string
+  /** The allocation this scenario replaced, so the receipt can name what actually moved. */
+  from: Allocation
   allocation: Allocation
+  pins: Pins
+  stateVersion: number
   modelVersion: string
 }
 
@@ -89,6 +94,16 @@ function withActivity(state: CivicState, meta: ActivityMeta): Pick<CivicState, '
   }
 }
 
+/**
+ * A preview solved before the human pinned a program can contradict that pin.
+ * Pins bind every plan, so such a preview must not be acceptable until the agent revises it.
+ */
+export function stagedPinConflicts(state: CivicState): ProgramId[] {
+  if (state.staged?.result.status !== 'feasible') return []
+  const { allocation } = state.staged.result
+  return PROGRAM_IDS.filter((programId) => state.pins[programId] !== undefined && allocation[programId] !== state.pins[programId])
+}
+
 export function civicReducer(state: CivicState, action: CivicAction): CivicState {
   switch (action.type) {
     case 'pin':
@@ -103,12 +118,15 @@ export function civicReducer(state: CivicState, action: CivicAction): CivicState
     case 'discard':
       return { ...state, ...withActivity(state, action.meta), staged: null, suppressedCoefficients: [] }
     case 'accept': {
-      if (state.staged?.result.status !== 'feasible') return state
+      if (state.staged?.result.status !== 'feasible' || stagedPinConflicts(state).length > 0) return state
       const accepted: AcceptedScenario = {
         id: action.id,
         name: state.staged.intent.name,
         rationale: state.staged.intent.rationale,
+        from: { ...state.canonical },
         allocation: { ...state.staged.result.allocation },
+        pins: { ...state.pins },
+        stateVersion: state.stateVersion + 1,
         modelVersion: state.modelVersion,
       }
       return {
@@ -147,6 +165,9 @@ export function restorePersistentState(serialized: string): CivicState {
   const parsed = JSON.parse(serialized) as Partial<CivicState>
   if (parsed.modelVersion !== MODEL_VERSION || !parsed.canonical || !Array.isArray(parsed.accepted)) {
     throw new Error('Saved Civic state is incompatible with the current model')
+  }
+  if (parsed.accepted.some((scenario) => !scenario.from || !scenario.pins)) {
+    throw new Error('Saved Civic receipts predate the current receipt contract')
   }
   return { ...createInitialState(), canonical: parsed.canonical, accepted: parsed.accepted }
 }

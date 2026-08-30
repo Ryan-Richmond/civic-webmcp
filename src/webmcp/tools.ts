@@ -243,6 +243,12 @@ export function buildCivicTools(state: CivicState, environment: ToolEnvironment)
   return tools
 }
 
+/** The exact tool names Civic would register for this state, so the activity rail cannot drift from the real surface. */
+export function civicToolNames(state: CivicState): string[] {
+  const inert: ToolEnvironment = { getState: () => state, dispatch: () => {} }
+  return buildCivicTools(state, inert).map((tool) => tool.name)
+}
+
 export function registerCivicTools(modelContext: WebMCP.ModelContext, state: CivicState, environment: ToolEnvironment): ToolRegistration {
   const controller = new AbortController()
   const ready = Promise.all(
